@@ -1,6 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
-using AutoMapper;
 
 namespace FileService.Application;
 

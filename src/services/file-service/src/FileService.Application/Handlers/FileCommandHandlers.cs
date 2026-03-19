@@ -61,7 +61,7 @@ public sealed class UploadFileCommandHandler : IRequestHandler<UploadFileCommand
             request.RelatedEntityId);
 
         fileRecord.MarkAsVirusSafe();
-        _repository.Add(fileRecord);
+        await _repository.AddAsync(fileRecord, cancellationToken);
         await _repository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<FileDto>(fileRecord);
@@ -71,7 +71,7 @@ public sealed class UploadFileCommandHandler : IRequestHandler<UploadFileCommand
 /// <summary>
 /// Handler for deleting files.
 /// </summary>
-public sealed class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand>
+public sealed class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand, Unit>
 {
     private readonly IFileRepository _repository;
     private readonly IFileStorageService _storageService;
@@ -82,7 +82,7 @@ public sealed class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
     }
 
-    public async Task Handle(DeleteFileCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
         var fileRecord = await _repository.GetByIdAsync(request.FileId, cancellationToken);
         if (fileRecord == null || fileRecord.UserId != request.UserId)
@@ -93,13 +93,14 @@ public sealed class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand
 
         // Delete from storage
         await _storageService.DeleteFileAsync(fileRecord.StoragePath, cancellationToken);
+        return Unit.Value;
     }
 }
 
 /// <summary>
 /// Handler for marking file as virus-safe.
 /// </summary>
-public sealed class MarkFileAsVirusSafeCommandHandler : IRequestHandler<MarkFileAsVirusSafeCommand>
+public sealed class MarkFileAsVirusSafeCommandHandler : IRequestHandler<MarkFileAsVirusSafeCommand, Unit>
 {
     private readonly IFileRepository _repository;
 
@@ -108,7 +109,7 @@ public sealed class MarkFileAsVirusSafeCommandHandler : IRequestHandler<MarkFile
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task Handle(MarkFileAsVirusSafeCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(MarkFileAsVirusSafeCommand request, CancellationToken cancellationToken)
     {
         var fileRecord = await _repository.GetByIdAsync(request.FileId, cancellationToken);
         if (fileRecord == null)
@@ -116,13 +117,14 @@ public sealed class MarkFileAsVirusSafeCommandHandler : IRequestHandler<MarkFile
 
         fileRecord.MarkAsVirusSafe();
         await _repository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
 
 /// <summary>
 /// Handler for marking file as virus detected.
 /// </summary>
-public sealed class MarkFileAsVirusDetectedCommandHandler : IRequestHandler<MarkFileAsVirusDetectedCommand>
+public sealed class MarkFileAsVirusDetectedCommandHandler : IRequestHandler<MarkFileAsVirusDetectedCommand, Unit>
 {
     private readonly IFileRepository _repository;
     private readonly IFileStorageService _storageService;
@@ -133,7 +135,7 @@ public sealed class MarkFileAsVirusDetectedCommandHandler : IRequestHandler<Mark
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
     }
 
-    public async Task Handle(MarkFileAsVirusDetectedCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(MarkFileAsVirusDetectedCommand request, CancellationToken cancellationToken)
     {
         var fileRecord = await _repository.GetByIdAsync(request.FileId, cancellationToken);
         if (fileRecord == null)
@@ -144,5 +146,6 @@ public sealed class MarkFileAsVirusDetectedCommandHandler : IRequestHandler<Mark
 
         // Delete from storage
         await _storageService.DeleteFileAsync(fileRecord.StoragePath, cancellationToken);
+        return Unit.Value;
     }
 }

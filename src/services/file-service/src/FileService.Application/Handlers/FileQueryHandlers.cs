@@ -3,6 +3,7 @@ using AutoMapper;
 using FileService.Application.DTOs;
 using FileService.Application.Interfaces;
 using FileService.Application.Queries;
+using SharedKernel;
 
 namespace FileService.Application.Handlers;
 

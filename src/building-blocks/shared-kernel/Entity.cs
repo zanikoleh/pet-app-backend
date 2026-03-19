@@ -1,17 +1,11 @@
 namespace SharedKernel;
 
 /// <summary>
-/// Base class for all entities in the domain.
-/// Entities have identity and are mutable.
+/// Non-generic base class for all entities.
+/// Provides access to domain events.
 /// </summary>
-public abstract class Entity<TId> : IEquatable<Entity<TId>>
-    where TId : notnull
+public abstract class Entity
 {
-    /// <summary>
-    /// The unique identifier for this entity.
-    /// </summary>
-    public TId Id { get; protected set; }
-
     /// <summary>
     /// Collection of domain events that occurred on this entity.
     /// These should be published after the entity is persisted.
@@ -22,13 +16,6 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     /// Gets all domain events raised by this entity.
     /// </summary>
     public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-
-    protected Entity() { }
-
-    protected Entity(TId id)
-    {
-        Id = id;
-    }
 
     /// <summary>
     /// Adds a domain event to the entity's event collection.
@@ -53,6 +40,26 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();
+    }
+}
+
+/// <summary>
+/// Base class for all entities in the domain.
+/// Entities have identity and are mutable.
+/// </summary>
+public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>>
+    where TId : notnull
+{
+    /// <summary>
+    /// The unique identifier for this entity.
+    /// </summary>
+    public TId Id { get; protected set; }
+
+    //protected Entity() { }
+
+    protected Entity(TId id)
+    {
+        Id = id;
     }
 
     /// <summary>
