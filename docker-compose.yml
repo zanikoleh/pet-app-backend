@@ -1,0 +1,205 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "PetApp123!@#"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - pet-app-network
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "PetApp123!@#", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Azure Service Bus Emulator (for local development)
+  # In production, use Azure Service Bus
+  # For development, we'll use RabbitMQ as a message broker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - pet-app-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Identity Service
+  identity-service:
+    build:
+      context: .
+      dockerfile: src/services/identity-service/src/IdentityService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings__IdentityServiceDb=Server=sqlserver;Database=PetApp.IdentityService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
+      - JwtSettings__Issuer=pet-app-identity-service
+      - JwtSettings__Audience=pet-app-api
+    ports:
+      - "44301:443"
+      - "5001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  # User Profile Service
+  user-profile-service:
+    build:
+      context: .
+      dockerfile: src/services/user-service/src/UserProfileService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings__UserProfileServiceDb=Server=sqlserver;Database=PetApp.UserProfileService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
+      - JwtSettings__Issuer=pet-app-identity-service
+      - JwtSettings__Audience=pet-app-api
+    ports:
+      - "44302:443"
+      - "5002:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      identity-service:
+        condition: service_started
+    networks:
+      - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  # Pet Service
+  pet-service:
+    build:
+      context: .
+      dockerfile: src/services/pet-service/src/PetService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings__PetServiceDb=Server=sqlserver;Database=PetApp.PetService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
+      - JwtSettings__Issuer=pet-app-identity-service
+      - JwtSettings__Audience=pet-app-api
+    ports:
+      - "5000:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      identity-service:
+        condition: service_started
+    networks:
+      - pet-app-network
+
+  # File Service
+  file-service:
+    build:
+      context: .
+      dockerfile: src/services/file-service/src/FileService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings__FileServiceDb=Server=sqlserver;Database=PetApp.FileService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
+      - JwtSettings__Issuer=pet-app-identity-service
+      - JwtSettings__Audience=pet-app-api
+    ports:
+      - "44303:443"
+      - "5003:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      identity-service:
+        condition: service_started
+    networks:
+      - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  # Notification Service
+  notification-service:
+    build:
+      context: .
+      dockerfile: src/services/notification-service/src/NotificationService.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+    ports:
+      - "44304:443"
+      - "5004:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: .
+      dockerfile: src/api-gateway/Gateway.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+    ports:
+      - "44300:443"
+    depends_on:
+      - identity-service
+      - user-profile-service
+      - pet-service
+      - file-service
+      - notification-service
+    networks:
+      - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+volumes:
+  sqlserver_data:
+  rabbitmq_data:
+
+networks:
+  pet-app-network:
+    driver: bridge

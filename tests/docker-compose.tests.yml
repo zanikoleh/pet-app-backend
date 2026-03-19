@@ -1,0 +1,32 @@
+version: '3.8'
+
+# Docker Compose file for running integration tests
+# This is a minimal setup for CI/CD pipelines
+
+services:
+  # SQL Server for tests
+  sqlserver-tests:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "TestPassword123!@#"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqlserver_tests_data:/var/opt/mssql
+
+  # RabbitMQ for tests
+  rabbitmq-tests:
+    image: rabbitmq:3.12-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5673:5672"
+    volumes:
+      - rabbitmq_tests_data:/var/lib/rabbitmq
+
+volumes:
+  sqlserver_tests_data:
+  rabbitmq_tests_data:

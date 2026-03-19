@@ -1,0 +1,87 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/{controller}/{action?}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44301
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/{controller}/{action?}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "RouteDescription": "Identity Service",
+      "SwaggerKey": "identity",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/{controller}/{action?}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44302
+        }
+      ],
+      "UpstreamPathTemplate": "/profiles/{controller}/{action?}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "RouteDescription": "User Profile Service"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{controller}/{action?}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44303
+        }
+      ],
+      "UpstreamPathTemplate": "/files/{controller}/{action?}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "RouteDescription": "File Service"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{controller}/{action?}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/pets/{controller}/{action?}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "RouteDescription": "Pet Service"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{controller}/{action?}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44304
+        }
+      ],
+      "UpstreamPathTemplate": "/notifications/{controller}/{action?}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "RouteDescription": "Notification Service"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:5000",
+    "ServiceDiscoveryProvider": {
+      "Type": "Consul"
+    },
+    "RateLimitOptions": {
+      "ClientIdHeader": "X-Client-ID",
+      "QuotaExceededMessage": "Rate limit exceeded",
+      "RateLimitCounterPrefix": "petapp_ratelimit",
+      "DisableRateLimitHeaders": false,
+      "HttpStatusCode": 429
+    }
+  }
+}

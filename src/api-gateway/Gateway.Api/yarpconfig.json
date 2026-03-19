@@ -1,0 +1,118 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "identity-route": {
+        "Match": {
+          "Path": "/identity/{**catch-all}"
+        },
+        "ClusterId": "identity-cluster",
+        "Transforms": [
+          {
+            "PathPattern": "/identity/{**catch-all}",
+            "PathReplacement": "/api/{catch-all}"
+          }
+        ]
+      },
+      "profiles-route": {
+        "Match": {
+          "Path": "/profiles/{**catch-all}"
+        },
+        "ClusterId": "profiles-cluster",
+        "Transforms": [
+          {
+            "PathPattern": "/profiles/{**catch-all}",
+            "PathReplacement": "/api/{catch-all}"
+          }
+        ]
+      },
+      "files-route": {
+        "Match": {
+          "Path": "/files/{**catch-all}"
+        },
+        "ClusterId": "files-cluster",
+        "Transforms": [
+          {
+            "PathPattern": "/files/{**catch-all}",
+            "PathReplacement": "/api/{catch-all}"
+          }
+        ]
+      },
+      "pets-route": {
+        "Match": {
+          "Path": "/pets/{**catch-all}"
+        },
+        "ClusterId": "pets-cluster",
+        "Transforms": [
+          {
+            "PathPattern": "/pets/{**catch-all}",
+            "PathReplacement": "/api/{catch-all}"
+          }
+        ]
+      },
+      "notifications-route": {
+        "Match": {
+          "Path": "/notifications/{**catch-all}"
+        },
+        "ClusterId": "notifications-cluster",
+        "Transforms": [
+          {
+            "PathPattern": "/notifications/{**catch-all}",
+            "PathReplacement": "/api/{catch-all}"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "identity-cluster": {
+        "Destinations": {
+          "identity-1": {
+            "Address": "https://localhost:44301"
+          }
+        },
+        "HttpRequest": {
+          "Timeout": "00:00:30"
+        }
+      },
+      "profiles-cluster": {
+        "Destinations": {
+          "profiles-1": {
+            "Address": "https://localhost:44302"
+          }
+        },
+        "HttpRequest": {
+          "Timeout": "00:00:30"
+        }
+      },
+      "files-cluster": {
+        "Destinations": {
+          "files-1": {
+            "Address": "https://localhost:44303"
+          }
+        },
+        "HttpRequest": {
+          "Timeout": "00:00:30"
+        }
+      },
+      "pets-cluster": {
+        "Destinations": {
+          "pets-1": {
+            "Address": "https://localhost:5000"
+          }
+        },
+        "HttpRequest": {
+          "Timeout": "00:00:30"
+        }
+      },
+      "notifications-cluster": {
+        "Destinations": {
+          "notifications-1": {
+            "Address": "https://localhost:44304"
+          }
+        },
+        "HttpRequest": {
+          "Timeout": "00:00:30"
+        }
+      }
+    }
+  }
+}

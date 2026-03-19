@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../PetService.Application/PetService.Application.csproj" />
-    <ProjectReference Include="../../../building-blocks/infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../../../../building-blocks/infrastructure/Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

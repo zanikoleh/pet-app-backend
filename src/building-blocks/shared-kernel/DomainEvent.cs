@@ -2,14 +2,19 @@ namespace SharedKernel;
 
 /// <summary>
 /// Base class for all domain events in the system.
-/// Domain events represent something significant that happened in the domain.
+/// Domain events represent something that happened in the domain and are used for cross-aggregate communication.
 /// </summary>
 public abstract class DomainEvent
 {
     /// <summary>
-    /// Unique identifier for the event instance.
+    /// Unique identifier for this event instance.
     /// </summary>
     public Guid EventId { get; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The aggregate root ID that raised this event.
+    /// </summary>
+    public Guid AggregateId { get; set; }
 
     /// <summary>
     /// Timestamp when the event occurred.
@@ -19,28 +24,16 @@ public abstract class DomainEvent
     /// <summary>
     /// Correlation ID for tracing related events across services.
     /// </summary>
-    public string? CorrelationId { get; set; }
+    public Guid CorrelationId { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// Optional metadata for the event (e.g., user context, request ID).
+    /// Causation ID to track what command or event caused this event.
     /// </summary>
-    public IDictionary<string, object>? Metadata { get; set; }
-}
+    public Guid? CausationId { get; set; }
 
-/// <summary>
-/// Marker interface for MediatR notification integration.
-/// Domain events are published as notifications.
-/// </summary>
-public interface IDomainEvent : INotification
-{
-    Guid EventId { get; }
-    DateTime OccurredAt { get; }
-    string? CorrelationId { get; set; }
-}
-
-/// <summary>
-/// Base class for domain events that also implement IDomainEvent for MediatR.
-/// </summary>
-public abstract class DomainEventNotification : DomainEvent, IDomainEvent
-{
+    /// <summary>
+    /// Version of the aggregate when this event was raised.
+    /// Used for optimistic concurrency control.
+    /// </summary>
+    public int AggregateVersion { get; set; }
 }
