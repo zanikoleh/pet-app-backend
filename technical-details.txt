@@ -1,0 +1,7 @@
+Bounded Contexts:
+    1. Identity Service
+    2. User Profile Service
+    3. Pet / Resource Service
+    4. File Service
+    5. Notification Service
+
