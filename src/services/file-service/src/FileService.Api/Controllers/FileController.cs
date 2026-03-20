@@ -18,6 +18,9 @@ public class FileController : ControllerBase
 {
     private readonly IMediator _mediator;
 
+    /// <summary>
+    /// Constructor for FileController.
+    /// </summary>
     public FileController(IMediator mediator)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
@@ -155,5 +158,8 @@ public class FileController : ControllerBase
 /// </summary>
 public class DownloadUrlResponse
 {
+    /// <summary>
+    /// The URL to download the file. This URL is typically time-limited and may require authentication depending on the storage implementation.
+    /// </summary>
     public string DownloadUrl { get; set; } = string.Empty;
 }
