@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="../../../building-blocks/contracts/Contracts.csproj" />
+  <Project Path="../../../building-blocks/event-bus/EventBus.csproj" />
+  <Project Path="../../../building-blocks/infrastructure/Infrastructure.csproj" />
+  <Project Path="../../../building-blocks/shared-kernel/SharedKernel.csproj" />
+  <Project Path="IdentityService.Api/IdentityService.Api.csproj" />
+  <Project Path="IdentityService.Application/IdentityService.Application.csproj" />
+  <Project Path="IdentityService.Infrastructure/IdentityService.Infrastructure.csproj" />
+  <Project Path="IdentityService.Domain/IdentityService.Domain.csproj" />
+</Solution>

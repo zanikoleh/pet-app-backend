@@ -1,3 +1,5 @@
+using SharedKernel.Infrastructure;
+
 namespace IdentityService.Application.Interfaces;
 
 /// <summary>

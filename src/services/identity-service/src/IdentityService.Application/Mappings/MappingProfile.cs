@@ -1,7 +1,7 @@
 using AutoMapper;
 using IdentityService.Application.DTOs;
 using IdentityService.Domain.Aggregates;
-using IdentityService.Domain.Entities;
+using IdentityService.Domain.ValueObjects;
 
 namespace IdentityService.Application.Mappings;
 
@@ -16,13 +16,13 @@ public class IdentityMappingProfile : Profile
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Value))
             .ForMember(dest => dest.OAuthLinks, opt => opt.MapFrom(src =>
-                src.OAuthLinks.Select(l => new OAuthLinkDto
+                src.OAuthProviders.Select(l => new OAuthLinkDto
                 {
                     Provider = l.Provider,
                     LinkedAt = l.LinkedAt
                 }).ToList()));
 
-        // OAuth link mappings
-        CreateMap<OAuthProviderLink, OAuthLinkDto>();
+        // OAuth provider mappings
+        CreateMap<OAuthProvider, OAuthLinkDto>();
     }
 }

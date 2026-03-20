@@ -5,6 +5,7 @@ using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Aggregates;
 using IdentityService.Domain.ValueObjects;
+using SharedKernel;
 
 namespace IdentityService.Application.Handlers;
 
@@ -39,7 +40,7 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Au
         var user = new User(email, passwordHash, request.FullName);
 
         // Save user
-        _userRepository.Add(user);
+        await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync(cancellationToken);
 
         // Generate tokens
@@ -151,7 +152,7 @@ public sealed class OAuthLoginCommandHandler : IRequestHandler<OAuthLoginCommand
             if (userByEmail != null)
             {
                 // Link the OAuth provider to existing account
-                userByEmail.LinkOAuthProvider(request.Provider, request.ProviderUserId, request.Email);
+                userByEmail.LinkOAuthProvider(request.Provider, request.ProviderUserId);
                 user = userByEmail;
             }
             else
@@ -159,7 +160,7 @@ public sealed class OAuthLoginCommandHandler : IRequestHandler<OAuthLoginCommand
                 // Create new user from OAuth
                 var email = Email.Create(request.Email);
                 user = User.CreateFromOAuth(request.Provider, request.ProviderUserId, email, request.FullName, request.Avatar);
-                _userRepository.Add(user);
+                await _userRepository.AddAsync(user);
             }
         }
 
@@ -216,7 +217,7 @@ public sealed class RefreshAccessTokenCommandHandler : IRequestHandler<RefreshAc
         var accessToken = _jwtTokenService.GenerateAccessToken(user.Id, user.Email.Value, user.Role.Value);
         var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
         
-        user.RevokeRefreshToken(validToken.Id);
+        user.RevokeRefreshToken(validToken.Token);
         user.AddRefreshToken(newRefreshToken, _jwtTokenService.GetRefreshTokenExpirationMinutes());
         await _userRepository.SaveChangesAsync(cancellationToken);
 
@@ -234,7 +235,7 @@ public sealed class RefreshAccessTokenCommandHandler : IRequestHandler<RefreshAc
 /// <summary>
 /// Handler for changing user password.
 /// </summary>
-public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand>
+public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Unit>
 {
     private readonly IUserRepository _userRepository;
 
@@ -243,7 +244,7 @@ public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswor
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user == null || !user.IsActive)
@@ -255,6 +256,8 @@ public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswor
         var newPasswordHash = PasswordHash.Create(request.NewPassword);
         user.ChangePassword(newPasswordHash);
         await _userRepository.SaveChangesAsync(cancellationToken);
+
+        return Unit.Value;
     }
 }
 
@@ -278,7 +281,7 @@ public sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileC
         if (user == null || !user.IsActive)
             throw new NotFoundException("User not found.", "USER_NOT_FOUND");
 
-        user.UpdateProfile(request.FullName, request.Avatar);
+        user.UpdateProfile(request.FullName, null, request.Avatar);
         await _userRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<UserDto>(user);
@@ -286,9 +289,27 @@ public sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileC
 }
 
 /// <summary>
+/// Helper methods for handlers.
+/// </summary>
+internal static class HandlerHelpers
+{
+    public static (string? firstName, string? lastName) ParseFullName(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName))
+            return (null, null);
+
+        var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var firstName = parts.Length > 0 ? parts[0] : null;
+        var lastName = parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : null;
+
+        return (firstName, lastName);
+    }
+}
+
+/// <summary>
 /// Handler for verifying user email.
 /// </summary>
-public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand>
+public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Unit>
 {
     private readonly IUserRepository _userRepository;
 
@@ -297,7 +318,7 @@ public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailComma
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user == null)
@@ -305,6 +326,7 @@ public sealed class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailComma
 
         user.VerifyEmail();
         await _userRepository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
 
@@ -328,7 +350,7 @@ public sealed class LinkOAuthProviderCommandHandler : IRequestHandler<LinkOAuthP
         if (user == null || !user.IsActive)
             throw new NotFoundException("User not found.", "USER_NOT_FOUND");
 
-        user.LinkOAuthProvider(request.Provider, request.ProviderUserId, request.ProviderEmail);
+        user.LinkOAuthProvider(request.Provider, request.ProviderUserId);
         await _userRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<UserDto>(user);
@@ -365,7 +387,7 @@ public sealed class UnlinkOAuthProviderCommandHandler : IRequestHandler<UnlinkOA
 /// <summary>
 /// Handler for deactivating user account.
 /// </summary>
-public sealed class DeactivateAccountCommandHandler : IRequestHandler<DeactivateAccountCommand>
+public sealed class DeactivateAccountCommandHandler : IRequestHandler<DeactivateAccountCommand, Unit>
 {
     private readonly IUserRepository _userRepository;
 
@@ -374,7 +396,7 @@ public sealed class DeactivateAccountCommandHandler : IRequestHandler<Deactivate
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task Handle(DeactivateAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeactivateAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user == null)
@@ -382,13 +404,14 @@ public sealed class DeactivateAccountCommandHandler : IRequestHandler<Deactivate
 
         user.Deactivate();
         await _userRepository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
 
 /// <summary>
 /// Handler for logout (revoke all refresh tokens).
 /// </summary>
-public sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand>
+public sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand, Unit>
 {
     private readonly IUserRepository _userRepository;
 
@@ -397,7 +420,7 @@ public sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand>
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task Handle(LogoutCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user == null)
@@ -406,9 +429,10 @@ public sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand>
         // Revoke all refresh tokens
         foreach (var token in user.RefreshTokens.Where(t => !t.IsRevoked))
         {
-            user.RevokeRefreshToken(token.Id);
+            user.RevokeRefreshToken(token.Token);
         }
 
         await _userRepository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }

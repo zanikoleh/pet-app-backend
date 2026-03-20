@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FileService.Application.Interfaces;
 using FileService.Infrastructure.Persistence;
 using FileService.Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FileService.Infrastructure;
 

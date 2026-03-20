@@ -55,7 +55,10 @@ public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>>
     /// </summary>
     public TId Id { get; protected set; }
 
-    //protected Entity() { }
+    protected Entity()
+    {
+        Id = default!;
+    }
 
     protected Entity(TId id)
     {

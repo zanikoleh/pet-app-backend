@@ -11,7 +11,7 @@ using SharedKernel.Infrastructure;
 using System.Text;
 using System.Reflection;
 
-var builder = WebApplicationBuilder.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 builder.Services.AddControllers();
@@ -117,3 +117,5 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+dotnet ef migrations add InitialCreate --project src/FileService.Infrastructure --startup-project src/FileService.Api --output-dir Persistence/Migrations

@@ -3,6 +3,7 @@ using MediatR;
 using IdentityService.Application.DTOs;
 using IdentityService.Application.Interfaces;
 using IdentityService.Application.Queries;
+using SharedKernel;
 
 namespace IdentityService.Application.Handlers;
 

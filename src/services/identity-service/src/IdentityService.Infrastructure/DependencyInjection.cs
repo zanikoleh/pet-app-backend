@@ -1,10 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using IdentityService.Application.Interfaces;
 using IdentityService.Infrastructure.Persistence;
 using IdentityService.Infrastructure.Services;
-using SharedKernel.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Infrastructure;
 
