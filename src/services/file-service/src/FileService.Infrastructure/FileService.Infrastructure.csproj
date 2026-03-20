@@ -10,6 +10,7 @@
     <ProjectReference Include="../FileService.Domain/FileService.Domain.csproj" />
     <ProjectReference Include="../FileService.Application/FileService.Application.csproj" />
     <ProjectReference Include="../../../../building-blocks/infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../../../../building-blocks/event-bus/EventBus.csproj" />
   </ItemGroup>
 
   <ItemGroup>
