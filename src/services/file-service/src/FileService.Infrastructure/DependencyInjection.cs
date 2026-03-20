@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using FileService.Application.Interfaces;
 using FileService.Infrastructure.Persistence;
 using FileService.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace FileService.Infrastructure;
 
@@ -25,7 +25,8 @@ public static class DependencyInjection
                 sqlOptions.CommandTimeout(30);
             });
 
-            if (configuration.GetValue<bool>("Logging:EnableSqlLogging"))
+            var enableSqlLogging = configuration["Logging:EnableSqlLogging"];
+            if (bool.TryParse(enableSqlLogging, out var sqlLoggingEnabled) && sqlLoggingEnabled)
             {
                 options.LogTo(Console.WriteLine);
             }
