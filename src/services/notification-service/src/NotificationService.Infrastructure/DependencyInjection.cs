@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using NotificationService.Application;
 using NotificationService.Application.Interfaces;
 using NotificationService.Infrastructure.Services;
+using SharedKernel.Infrastructure.EventBus;
 
 namespace NotificationService.Infrastructure;
 

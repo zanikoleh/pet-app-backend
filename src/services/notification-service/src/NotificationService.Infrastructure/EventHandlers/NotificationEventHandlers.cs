@@ -1,6 +1,6 @@
 using MediatR;
-using SharedKernel.Infrastructure.Events;
 using NotificationService.Application.Commands;
+using SharedKernel.Infrastructure.EventBus;
 
 namespace NotificationService.Infrastructure.EventHandlers;
 
@@ -22,8 +22,12 @@ public class UserRegisteredEventHandler : INotificationHandler<IntegrationEventN
         if (notification.EventType != "user.registered")
             return;
 
-        var email = notification.Data["email"].GetString() ?? throw new InvalidOperationException();
-        var fullName = notification.Data["fullName"]?.GetString() ?? "User";
+        var email = notification.Data.TryGetValue("email", out var emailElement) 
+            ? emailElement.GetString() ?? throw new InvalidOperationException("Email is null")
+            : throw new InvalidOperationException("Email not found in event data");
+        var fullName = notification.Data.TryGetValue("fullName", out var fullNameElement) 
+            ? fullNameElement.GetString() ?? "User"
+            : "User";
         
         // In production, generate a proper activation link
         var activationLink = $"https://app.example.com/verify-email?token=xxx";
@@ -51,8 +55,12 @@ public class UserDeletedEventHandler : INotificationHandler<IntegrationEventNoti
         if (notification.EventType != "user.deleted")
             return;
 
-        var email = notification.Data["email"].GetString() ?? throw new InvalidOperationException();
-        var fullName = notification.Data["fullName"]?.GetString() ?? "User";
+        var email = notification.Data.TryGetValue("email", out var emailElement) 
+            ? emailElement.GetString() ?? throw new InvalidOperationException("Email is null")
+            : throw new InvalidOperationException("Email not found in event data");
+        var fullName = notification.Data.TryGetValue("fullName", out var fullNameElement) 
+            ? fullNameElement.GetString() ?? "User"
+            : "User";
 
         // Note: This would be sent from the account deactivation endpoint, not from event
         // This is here as an example of how to handle user events
@@ -77,8 +85,12 @@ public class NotificationPreferencesUpdatedEventHandler : INotificationHandler<I
         if (notification.EventType != "notification.preferences.updated")
             return;
 
-        var email = notification.Data["email"].GetString() ?? throw new InvalidOperationException();
-        var fullName = notification.Data["fullName"]?.GetString() ?? "User";
+        var email = notification.Data.TryGetValue("email", out var emailElement) 
+            ? emailElement.GetString() ?? throw new InvalidOperationException("Email is null")
+            : throw new InvalidOperationException("Email not found in event data");
+        var fullName = notification.Data.TryGetValue("fullName", out var fullNameElement) 
+            ? fullNameElement.GetString() ?? "User"
+            : "User";
 
         var command = new SendNotificationPreferencesUpdatedCommand(email, fullName);
         await _mediator.Send(command, cancellationToken);
