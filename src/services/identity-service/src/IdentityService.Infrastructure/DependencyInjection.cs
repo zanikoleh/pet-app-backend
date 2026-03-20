@@ -3,6 +3,8 @@ using IdentityService.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using IdentityService.Application.Interfaces;
+using SharedKernel.Infrastructure.EventBus;
 
 namespace IdentityService.Infrastructure;
 

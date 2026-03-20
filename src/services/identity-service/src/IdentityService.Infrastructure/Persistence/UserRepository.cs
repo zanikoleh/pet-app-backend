@@ -28,7 +28,7 @@ public class UserRepository : RepositoryBase<User, IdentityServiceDbContext, Gui
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.OAuthLinks
+            .FirstOrDefaultAsync(u => u.OAuthProviders
                 .Any(ol => ol.Provider == provider && ol.ProviderUserId == providerUserId),
                 cancellationToken);
     }

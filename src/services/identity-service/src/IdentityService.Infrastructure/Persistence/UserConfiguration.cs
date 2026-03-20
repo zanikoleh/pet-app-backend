@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using IdentityService.Domain.Aggregates;
 using IdentityService.Domain.Entities;
 using SharedKernel.Infrastructure;
+using IdentityService.Domain.ValueObjects;
 
 namespace IdentityService.Infrastructure.Persistence;
 
@@ -29,33 +30,31 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         // Value object: PasswordHash
         builder.Property(u => u.PasswordHash)
             .HasConversion(
-                ph => ph.Hash,
-                v => new PasswordHash(v))
+                ph => ph!.Value,
+                v => PasswordHash.Create(v))
             .HasColumnName("PasswordHash")
             .IsRequired();
 
         // Scalar properties
-        builder.Property(u => u.FullName)
-            .HasMaxLength(100);
+        //builder.Property(u => u.FullName)
+        //    .HasMaxLength(100);
 
         builder.Property(u => u.Avatar)
             .HasMaxLength(500);
 
-        builder.Property(u => u.IsEmailVerified);
+        //builder.Property(u => u.IsEmailVerified);
         builder.Property(u => u.IsActive);
         builder.Property(u => u.LastLoginAt);
 
-        // Owned collections
-        builder.OwnsMany(u => u.OAuthLinks, oal =>
+                // Owned collections
+        builder.OwnsMany(u => u.OAuthProviders, oal =>
         {
             oal.ToTable("OAuthProviderLinks");
             oal.WithOwner().HasForeignKey("UserId");
             oal.HasKey("Id");
-            oal.Property(o => o.Id).ValueGeneratedNever();
             oal.Property(o => o.Provider).HasMaxLength(50).IsRequired();
             oal.Property(o => o.ProviderUserId).HasMaxLength(500).IsRequired();
             oal.Property(o => o.LinkedAt);
-            oal.Property(o => o.UnlinkedAt);
         });
 
         builder.OwnsMany(u => u.RefreshTokens, rt =>
@@ -64,19 +63,22 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             rt.WithOwner().HasForeignKey("UserId");
             rt.HasKey("Id");
             rt.Property(r => r.Id).ValueGeneratedNever();
+            rt.Property(r => r.UserId);
             rt.Property(r => r.Token).HasMaxLength(500).IsRequired();
             rt.Property(r => r.ExpiresAt);
-            rt.Property(r => r.RevokedAt);
+            rt.Property(r => r.CreatedAt);
             rt.Property(r => r.IsRevoked);
         });
 
         // Value object: Role
         builder.Property(u => u.Role)
-            .HasConversion(r => r.Value, v => Role.Create(v))
+            .HasConversion(
+                r => r.Value,
+                v => v == "Admin" ? Role.Admin : Role.User)
             .HasColumnName("Role")
             .IsRequired()
             .HasMaxLength(20);
-
+            
         // Audit properties
         builder.Property(u => u.CreatedAt);
         builder.Property(u => u.UpdatedAt);

@@ -5,11 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using SharedKernel.Infrastructure;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,14 +37,19 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    c.AddSecurityRequirement((document) => new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
+            new OpenApiSecuritySchemeReference("Bearer")
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                Reference = new OpenApiReferenceWithDescription
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer",
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                },
             },
-            new string[] { }
+            Array.Empty<string>().ToList()
         }
     });
 
