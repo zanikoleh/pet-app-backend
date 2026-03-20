@@ -26,8 +26,8 @@ public static class DependencyInjection
                 sqlOptions.CommandTimeout(30);
             });
 
-            var enableSqlLogging = configuration["Logging:EnableSqlLogging"];
-            if (bool.TryParse(enableSqlLogging, out var sqlLoggingEnabled) && sqlLoggingEnabled)
+            var loggingSection = configuration.GetSection("Logging");
+            if (loggingSection.GetValue<bool>("EnableSqlLogging"))
             {
                 options.LogTo(Console.WriteLine);
             }
