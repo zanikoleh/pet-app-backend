@@ -21,16 +21,6 @@ public sealed class PetRepository : RepositoryBase<Pet, Guid>, IPetRepository
         //_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public Task<int> CountAsync(Specification<Pet> specification, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Pet?> FindAsync(Specification<Pet> specification, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
     /// <summary>
     /// Overrides SaveChangesAsync to persist changes to the database.
     /// Domain events are automatically published after persistence.

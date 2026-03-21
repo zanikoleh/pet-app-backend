@@ -13,6 +13,12 @@ public abstract class Specification<T>
     protected Func<T, object>? OrderByDescending { get; set; }
 
     /// <summary>
+    /// Paging information
+    /// </summary>
+    protected int? Skip { get; private set; }
+    protected int? Take { get; private set; }
+
+    /// <summary>
     /// Checks if the given object satisfies this specification
     /// </summary>
     public virtual bool IsSatisfiedBy(T candidate)
@@ -52,7 +58,27 @@ public abstract class Specification<T>
         var newCriteria = (T candidate) => !(Criteria?.Invoke(candidate) ?? false);
         return new NotSpecification<T>(newCriteria, this);
     }
+
+    /// <summary>
+    /// Applies paging to the specification
+    /// </summary>
+    protected void ApplyPaging(int skip, int take)
+    {
+        Skip = skip;
+        Take = take;
+    }
+
+    /// <summary>
+    /// Gets the number of records to skip for pagination
+    /// </summary>
+    public int? GetSkip() => Skip;
+
+    /// <summary>
+    /// Gets the number of records to take for pagination
+    /// </summary>
+    public int? GetTake() => Take;
 }
+
 
 /// <summary>
 /// A combined specification that represents the combination of two specifications

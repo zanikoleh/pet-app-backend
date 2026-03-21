@@ -23,19 +23,29 @@ help:
 
 build:
 	@echo "Building solution..."
-	dotnet build src/api-gateway/Gateway.Api/Gateway.Api.csproj
+	dotnet build src/api-gateway/Gateway.Api/Gateway.Api.csproj -c Release
+	dotnet build src/services/identity-service/src/IdentityService.Api/IdentityService.Api.csproj -c Release
+	dotnet build src/services/user-service/src/UserProfileService.Api/UserProfileService.Api.csproj -c Release
+	dotnet build src/services/file-service/src/FileService.Api/FileService.Api.csproj -c Release
+	dotnet build src/services/pet-service/src/PetService.Api/PetService.Api.csproj -c Release
+	dotnet build src/services/notification-service/src/NotificationService.Api/NotificationService.Api.csproj -c Release
 
 run:
 	@echo "Running all services..."
-	docker-compose up
+	docker-compose up -d
 
 test:
 	@echo "Running tests..."
-	dotnet test
+	dotnet test tests/IntegrationTests/IntegrationTests.csproj
 
 clean:
 	@echo "Cleaning build artifacts..."
 	dotnet clean src/api-gateway/Gateway.Api/Gateway.Api.csproj 2>/dev/null || true
+	dotnet clean src/services/identity-service/src/IdentityService.Api/IdentityService.Api.csproj 2>/dev/null || true
+	dotnet clean src/services/user-service/src/UserProfileService.Api/UserProfileService.Api.csproj 2>/dev/null || true
+	dotnet clean src/services/file-service/src/FileService.Api/FileService.Api.csproj 2>/dev/null || true
+	dotnet clean src/services/pet-service/src/PetService.Api/PetService.Api.csproj 2>/dev/null || true
+	dotnet clean src/services/notification-service/src/NotificationService.Api/NotificationService.Api.csproj 2>/dev/null || true
 	find . -type d -name bin -o -name obj | xargs rm -rf 2>/dev/null || true
 
 restore:
@@ -58,7 +68,11 @@ docker-down:
 
 db-migrate:
 	@echo "Running database migrations..."
+	# Run migrations for all services that have them
 	dotnet ef database update --project src/services/identity-service/src/IdentityService.Infrastructure
+	dotnet ef database update --project src/services/user-service/src/UserProfileService.Infrastructure
+	dotnet ef database update --project src/services/file-service/src/FileService.Infrastructure
+	dotnet ef database update --project src/services/pet-service/src/PetService.Infrastructure
 
 logs:
 	@echo "Showing Docker logs..."
