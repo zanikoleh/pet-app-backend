@@ -20,9 +20,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Azure Service Bus Emulator (for local development)
-  # In production, use Azure Service Bus
-  # For development, we'll use RabbitMQ as a message broker
+  # RabbitMQ Service
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
     environment:
@@ -112,6 +110,7 @@ services:
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
     ports:
+      - "44305:443"  # Changed from 5000 to avoid conflicts
       - "5000:80"
     depends_on:
       sqlserver:
@@ -122,6 +121,8 @@ services:
         condition: service_started
     networks:
       - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro  # Added missing volume mount
 
   # File Service
   file-service:
@@ -194,7 +195,7 @@ services:
     networks:
       - pet-app-network
     volumes:
-      - ~/.aspnet/https:/https:ro
+      - ~/.aspnet/https:/https:ro  # Added missing volume mount
 
 volumes:
   sqlserver_data:

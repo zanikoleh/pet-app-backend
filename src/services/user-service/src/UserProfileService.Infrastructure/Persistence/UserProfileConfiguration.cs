@@ -38,6 +38,9 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
             pd.Property(p => p.City).HasMaxLength(50);
             pd.Property(p => p.Country).HasMaxLength(50);
             pd.Property(p => p.ProfilePictureUrl).HasMaxLength(500);
+            
+            // Ignore DomainEvents for the owned Profile entity
+            pd.Ignore(p => p.DomainEvents);
         });
 
         // Owned entity: Preferences
@@ -53,6 +56,9 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
             prefs.Property(p => p.SmsNotifications).HasDefaultValue(false);
             prefs.Property(p => p.ReceivePromotions).HasDefaultValue(true);
             prefs.Property(p => p.ReceiveNewsletter).HasDefaultValue(true);
+            
+            // Ignore DomainEvents for the owned Preferences entity
+            prefs.Ignore(p => p.DomainEvents);
         });
 
         // Indices
