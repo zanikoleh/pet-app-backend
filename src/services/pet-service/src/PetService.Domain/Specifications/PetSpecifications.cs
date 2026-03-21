@@ -1,11 +1,12 @@
 using PetService.Domain.Aggregates;
+using SharedKernel;
 
 namespace PetService.Domain.Specifications;
 
 /// <summary>
 /// Specification for querying pets by owner
 /// </summary>
-public sealed class GetPetsByOwnerSpecification : Specification<Pet, Pet>
+public sealed class GetPetsByOwnerSpecification : Specification<Pet>
 {
     public GetPetsByOwnerSpecification(Guid ownerId, int page = 1, int pageSize = 10)
     {
@@ -20,7 +21,7 @@ public sealed class GetPetsByOwnerSpecification : Specification<Pet, Pet>
 /// <summary>
 /// Specification for getting a single pet by ID and owner
 /// </summary>
-public sealed class GetPetByIdAndOwnerSpecification : Specification<Pet, Pet>
+public sealed class GetPetByIdAndOwnerSpecification : Specification<Pet>
 {
     public GetPetByIdAndOwnerSpecification(Guid petId, Guid ownerId)
     {
@@ -31,7 +32,7 @@ public sealed class GetPetByIdAndOwnerSpecification : Specification<Pet, Pet>
 /// <summary>
 /// Specification for searching pets by name
 /// </summary>
-public sealed class SearchPetsByNameSpecification : Specification<Pet, Pet>
+public sealed class SearchPetsByNameSpecification : Specification<Pet>
 {
     public SearchPetsByNameSpecification(Guid ownerId, string searchTerm, int page = 1, int pageSize = 10)
     {
@@ -46,7 +47,7 @@ public sealed class SearchPetsByNameSpecification : Specification<Pet, Pet>
 /// <summary>
 /// Specification for getting all pets of a specific type owned by a user
 /// </summary>
-public sealed class GetPetsByOwnerAndTypeSpecification : Specification<Pet, Pet>
+public sealed class GetPetsByOwnerAndTypeSpecification : Specification<Pet>
 {
     public GetPetsByOwnerAndTypeSpecification(Guid ownerId, string petType, int page = 1, int pageSize = 10)
     {
@@ -56,4 +57,5 @@ public sealed class GetPetsByOwnerAndTypeSpecification : Specification<Pet, Pet>
         var skip = (page - 1) * pageSize;
         ApplyPaging(skip, pageSize);
     }
+
 }

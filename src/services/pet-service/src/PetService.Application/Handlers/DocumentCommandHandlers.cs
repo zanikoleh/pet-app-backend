@@ -3,6 +3,7 @@ using MediatR;
 using PetService.Application.Commands;
 using PetService.Application.DTOs;
 using PetService.Domain.Aggregates;
+using SharedKernel;
 
 namespace PetService.Application.Handlers;
 
@@ -36,7 +37,7 @@ public sealed class AddDocumentToPetCommandHandler : IRequestHandler<AddDocument
             request.Category,
             request.Description);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet);
         await _petRepository.SaveChangesAsync(cancellationToken);
 
         var document = pet.Documents.FirstOrDefault(d => d.Id == documentId);
@@ -66,7 +67,7 @@ public sealed class UpdatePetDocumentCommandHandler : IRequestHandler<UpdatePetD
 
         pet.UpdateDocument(request.DocumentId, request.Description);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet);
         await _petRepository.SaveChangesAsync(cancellationToken);
 
         var document = pet.Documents.FirstOrDefault(d => d.Id == request.DocumentId);
@@ -77,7 +78,7 @@ public sealed class UpdatePetDocumentCommandHandler : IRequestHandler<UpdatePetD
 /// <summary>
 /// Handler for removing a document from a pet.
 /// </summary>
-public sealed class RemoveDocumentFromPetCommandHandler : IRequestHandler<RemoveDocumentFromPetCommand>
+public sealed class RemoveDocumentFromPetCommandHandler : IRequestHandler<RemoveDocumentFromPetCommand, Unit>
 {
     private readonly IPetRepository _petRepository;
 
@@ -86,7 +87,7 @@ public sealed class RemoveDocumentFromPetCommandHandler : IRequestHandler<Remove
         _petRepository = petRepository ?? throw new ArgumentNullException(nameof(petRepository));
     }
 
-    public async Task Handle(RemoveDocumentFromPetCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RemoveDocumentFromPetCommand request, CancellationToken cancellationToken)
     {
         var pet = await _petRepository.GetByIdAsync(request.PetId, cancellationToken);
         if (pet == null || pet.OwnerId != request.OwnerId)
@@ -94,7 +95,9 @@ public sealed class RemoveDocumentFromPetCommandHandler : IRequestHandler<Remove
 
         pet.RemoveDocument(request.DocumentId);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet);
         await _petRepository.SaveChangesAsync(cancellationToken);
+
+        return Unit.Value;
     }
 }

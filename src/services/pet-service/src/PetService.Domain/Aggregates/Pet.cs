@@ -1,5 +1,7 @@
 using PetService.Domain.Entities;
+using PetService.Domain.Events;
 using PetService.Domain.ValueObjects;
+using SharedKernel;
 
 namespace PetService.Domain.Aggregates;
 

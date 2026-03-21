@@ -4,6 +4,7 @@ using PetService.Application.Commands;
 using PetService.Application.DTOs;
 using PetService.Domain.Aggregates;
 using PetService.Domain.ValueObjects;
+using SharedKernel;
 
 namespace PetService.Application.Handlers;
 
@@ -34,7 +35,7 @@ public sealed class CreatePetCommandHandler : IRequestHandler<CreatePetCommand, 
             breed,
             request.Description);
 
-        _petRepository.Add(pet);
+        await _petRepository.AddAsync(pet, cancellationToken);
         await _petRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<PetDto>(pet);
@@ -64,7 +65,7 @@ public sealed class UpdatePetCommandHandler : IRequestHandler<UpdatePetCommand, 
         var breed = !string.IsNullOrWhiteSpace(request.Breed) ? Breed.Create(request.Breed) : null;
         pet.UpdateInfo(request.Name, breed, request.Description);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet, cancellationToken);
         await _petRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<PetDto>(pet);
@@ -74,7 +75,7 @@ public sealed class UpdatePetCommandHandler : IRequestHandler<UpdatePetCommand, 
 /// <summary>
 /// Handler for deleting a pet.
 /// </summary>
-public sealed class DeletePetCommandHandler : IRequestHandler<DeletePetCommand>
+public sealed class DeletePetCommandHandler : IRequestHandler<DeletePetCommand, Unit>
 {
     private readonly IPetRepository _petRepository;
 
@@ -83,14 +84,16 @@ public sealed class DeletePetCommandHandler : IRequestHandler<DeletePetCommand>
         _petRepository = petRepository ?? throw new ArgumentNullException(nameof(petRepository));
     }
 
-    public async Task Handle(DeletePetCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeletePetCommand request, CancellationToken cancellationToken)
     {
         var pet = await _petRepository.GetByIdAsync(request.PetId, cancellationToken);
         if (pet == null || pet.OwnerId != request.OwnerId)
             throw new NotFoundException($"Pet with id {request.PetId} not found.", "PET_NOT_FOUND");
 
-        _petRepository.Remove(pet);
+        await _petRepository.DeleteAsync(pet.Id, cancellationToken);
         await _petRepository.SaveChangesAsync(cancellationToken);
+
+        return Unit.Value;
     }
 }
 
@@ -124,7 +127,7 @@ public sealed class AddPhotoToPetCommandHandler : IRequestHandler<AddPhotoToPetC
             request.Caption,
             request.Tags);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet, cancellationToken);
         await _petRepository.SaveChangesAsync(cancellationToken);
 
         var photo = pet.Photos.FirstOrDefault(p => p.Id == photoId);
@@ -154,7 +157,7 @@ public sealed class UpdatePetPhotoCommandHandler : IRequestHandler<UpdatePetPhot
 
         pet.UpdatePhoto(request.PhotoId, request.Caption, request.Tags);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet);
         await _petRepository.SaveChangesAsync(cancellationToken);
 
         var photo = pet.Photos.FirstOrDefault(p => p.Id == request.PhotoId);
@@ -165,7 +168,7 @@ public sealed class UpdatePetPhotoCommandHandler : IRequestHandler<UpdatePetPhot
 /// <summary>
 /// Handler for removing a photo from a pet.
 /// </summary>
-public sealed class RemovePhotoFromPetCommandHandler : IRequestHandler<RemovePhotoFromPetCommand>
+public sealed class RemovePhotoFromPetCommandHandler : IRequestHandler<RemovePhotoFromPetCommand, Unit>
 {
     private readonly IPetRepository _petRepository;
 
@@ -174,7 +177,7 @@ public sealed class RemovePhotoFromPetCommandHandler : IRequestHandler<RemovePho
         _petRepository = petRepository ?? throw new ArgumentNullException(nameof(petRepository));
     }
 
-    public async Task Handle(RemovePhotoFromPetCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RemovePhotoFromPetCommand request, CancellationToken cancellationToken)
     {
         var pet = await _petRepository.GetByIdAsync(request.PetId, cancellationToken);
         if (pet == null || pet.OwnerId != request.OwnerId)
@@ -182,7 +185,8 @@ public sealed class RemovePhotoFromPetCommandHandler : IRequestHandler<RemovePho
 
         pet.RemovePhoto(request.PhotoId);
 
-        _petRepository.Update(pet);
+        await _petRepository.UpdateAsync(pet);
         await _petRepository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }

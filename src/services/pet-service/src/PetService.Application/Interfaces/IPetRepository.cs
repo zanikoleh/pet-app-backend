@@ -1,5 +1,7 @@
 using PetService.Domain.Aggregates;
 using PetService.Domain.Specifications;
+using SharedKernel;
+using SharedKernel.Infrastructure;
 
 namespace PetService.Application.Handlers;
 
@@ -12,7 +14,7 @@ public interface IPetRepository : IRepository<Pet, Guid>
 }
 
 // Additional specifications for count queries
-public sealed class PetsByOwnerCountSpecification : Specification<Pet, Pet>
+public sealed class PetsByOwnerCountSpecification : Specification<Pet>
 {
     public PetsByOwnerCountSpecification(Guid ownerId)
     {
@@ -20,7 +22,7 @@ public sealed class PetsByOwnerCountSpecification : Specification<Pet, Pet>
     }
 }
 
-public sealed class SearchPetsByNameCountSpecification : Specification<Pet, Pet>
+public sealed class SearchPetsByNameCountSpecification : Specification<Pet>
 {
     public SearchPetsByNameCountSpecification(Guid ownerId, string searchTerm)
     {
@@ -28,7 +30,7 @@ public sealed class SearchPetsByNameCountSpecification : Specification<Pet, Pet>
     }
 }
 
-public sealed class PetsByOwnerAndTypeCountSpecification : Specification<Pet, Pet>
+public sealed class PetsByOwnerAndTypeCountSpecification : Specification<Pet>
 {
     public PetsByOwnerAndTypeCountSpecification(Guid ownerId, string petType)
     {

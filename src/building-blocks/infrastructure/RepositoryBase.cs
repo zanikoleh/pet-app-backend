@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace SharedKernel.Infrastructure;
 
@@ -102,6 +103,10 @@ public abstract class RepositoryBase<TEntity, TId> : RepositoryBase<TEntity, DbC
     where TId : notnull
 {
     protected RepositoryBase(DbContext dbContext) : base(dbContext)
+    {
+    }
+
+    protected RepositoryBase(DbContext dbContext, ILogger logger) : base(dbContext)
     {
     }
 }

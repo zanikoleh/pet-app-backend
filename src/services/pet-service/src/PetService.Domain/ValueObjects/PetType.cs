@@ -1,3 +1,5 @@
+using SharedKernel;
+
 namespace PetService.Domain.ValueObjects;
 
 /// <summary>

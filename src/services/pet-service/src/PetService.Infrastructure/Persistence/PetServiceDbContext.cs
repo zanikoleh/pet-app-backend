@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PetService.Domain.Aggregates;
+using SharedKernel.Infrastructure;
+using SharedKernel.Infrastructure.EventBus;
 
 namespace PetService.Infrastructure.Persistence;
 

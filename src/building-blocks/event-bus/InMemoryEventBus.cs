@@ -37,8 +37,7 @@ public class InMemoryEventBus : IEventPublisher, IEventSubscriber
             
             if (method != null)
             {
-                return (Task)method.Invoke(this, new object[] { domainEvent, cancellationToken }) 
-                    ?? Task.CompletedTask;
+                return method.Invoke(this, new object[] { domainEvent, cancellationToken }) as Task ?? Task.CompletedTask;
             }
         }
 

@@ -1,9 +1,11 @@
 using AutoMapper;
+using Infrastructure;
 using MediatR;
 using PetService.Application.DTOs;
 using PetService.Application.Queries;
 using PetService.Domain.Aggregates;
 using PetService.Domain.Specifications;
+using SharedKernel;
 
 namespace PetService.Application.Handlers;
 
@@ -24,7 +26,7 @@ public sealed class GetPetQueryHandler : IRequestHandler<GetPetQuery, PetDto>
     public async Task<PetDto> Handle(GetPetQuery request, CancellationToken cancellationToken)
     {
         var specification = new GetPetByIdAndOwnerSpecification(request.PetId, request.OwnerId);
-        var pet = await _petRepository.FirstOrDefaultAsync(specification, cancellationToken);
+        var pet = await _petRepository.FindAsync(specification, cancellationToken);
 
         if (pet == null)
             throw new NotFoundException($"Pet with id {request.PetId} not found.", "PET_NOT_FOUND");
