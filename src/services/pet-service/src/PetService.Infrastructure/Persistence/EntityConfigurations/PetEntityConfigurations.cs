@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetService.Domain.Aggregates;
@@ -49,13 +50,13 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
         // Value object configuration - Breed
         builder.Property(p => p.Breed)
             .HasConversion(
-                b => b != null ? b.Value : null,
-                value => value != null ? Breed.Create(value) : null)
+                b => b == null ? null : b.Value,
+                value => string.IsNullOrWhiteSpace(value) ? null : Breed.Create(value))
             .HasMaxLength(100);
 
         // Configure Photos collection
-        builder.HasMany<Photo>()
-            .WithOwner()
+        builder.HasMany(p => p.Photos)
+            .WithOne()
             .HasForeignKey(ph => ph.PetId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -63,8 +64,8 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
             .UsePropertyAccessMode(PropertyAccessMode.Property);
 
         // Configure Documents collection
-        builder.HasMany<Document>()
-            .WithOwner()
+        builder.HasMany(p => p.Documents)
+            .WithOne()
             .HasForeignKey(d => d.PetId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -73,10 +74,10 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
 
         // Create index for owner to enable fast queries
         builder.HasIndex(p => p.OwnerId)
-            .HasName("IX_Pets_OwnerId");
+            .HasDatabaseName("IX_Pets_OwnerId");
 
         builder.HasIndex(p => new { p.OwnerId, p.CreatedAt })
-            .HasName("IX_Pets_OwnerId_CreatedAt");
+            .HasDatabaseName("IX_Pets_OwnerId_CreatedAt");
     }
 }
 
@@ -120,7 +121,7 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
 
         // Index for finding photos by pet
         builder.HasIndex(ph => ph.PetId)
-            .HasName("IX_Photos_PetId");
+            .HasDatabaseName("IX_Photos_PetId");
     }
 }
 
@@ -165,9 +166,9 @@ public sealed class DocumentConfiguration : IEntityTypeConfiguration<Document>
 
         // Index for finding documents by pet
         builder.HasIndex(d => d.PetId)
-            .HasName("IX_Documents_PetId");
+            .HasDatabaseName("IX_Documents_PetId");
 
         builder.HasIndex(d => new { d.PetId, d.Category })
-            .HasName("IX_Documents_PetId_Category");
+            .HasDatabaseName("IX_Documents_PetId_Category");
     }
 }

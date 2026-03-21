@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PetService.Application.Commands;
 using PetService.Application.DTOs;
 using PetService.Application.Queries;
+using SharedKernel;
 
 namespace PetService.Api.Controllers;
 
