@@ -1,6 +1,7 @@
 using MediatR;
-using SharedKernel.Infrastructure.Events;
+using SharedKernel.Infrastructure.EventBus;
 using UserProfileService.Application.Commands;
+using UserProfileService.Application.Interfaces;
 
 namespace UserProfileService.Infrastructure.EventHandlers;
 
@@ -25,8 +26,8 @@ public class UserRegisteredEventHandler : INotificationHandler<IntegrationEventN
         // Extract data from the integration event
         var userId = Guid.Parse(notification.Data["userId"].GetString() ?? throw new InvalidOperationException());
         var email = notification.Data["email"].GetString() ?? throw new InvalidOperationException();
-        var fullName = notification.Data["fullName"]?.GetString();
-        var avatar = notification.Data["avatar"]?.GetString();
+        var fullName = notification.Data["fullName"].GetString();
+        var avatar = notification.Data["avatar"].GetString();
 
         // Create user profile
         var command = new CreateProfileFromRegistrationCommand(userId, email, fullName, avatar);

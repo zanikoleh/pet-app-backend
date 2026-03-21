@@ -4,6 +4,7 @@ using UserProfileService.Application.Commands;
 using UserProfileService.Application.DTOs;
 using UserProfileService.Application.Interfaces;
 using UserProfileService.Domain.Aggregates;
+using SharedKernel;
 
 namespace UserProfileService.Application.Handlers;
 
@@ -78,7 +79,7 @@ public sealed class UpdateNotificationPreferencesCommandHandler : IRequestHandle
 /// <summary>
 /// Handler for updating language and timezone.
 /// </summary>
-public sealed class UpdateLanguageAndTimezoneCommandHandler : IRequestHandler<UpdateLanguageAndTimezoneCommand>
+public sealed class UpdateLanguageAndTimezoneCommandHandler : IRequestHandler<UpdateLanguageAndTimezoneCommand, Unit>
 {
     private readonly IUserProfileRepository _repository;
 
@@ -87,7 +88,7 @@ public sealed class UpdateLanguageAndTimezoneCommandHandler : IRequestHandler<Up
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task Handle(UpdateLanguageAndTimezoneCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateLanguageAndTimezoneCommand request, CancellationToken cancellationToken)
     {
         var userProfile = await _repository.GetByIdAsync(request.UserProfileId, cancellationToken);
         if (userProfile == null)
@@ -95,13 +96,14 @@ public sealed class UpdateLanguageAndTimezoneCommandHandler : IRequestHandler<Up
 
         userProfile.UpdateLanguageAndTimezone(request.Language, request.Timezone);
         await _repository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
 
 /// <summary>
 /// Handler for deactivating user profile.
 /// </summary>
-public sealed class DeactivateProfileCommandHandler : IRequestHandler<DeactivateProfileCommand>
+public sealed class DeactivateProfileCommandHandler : IRequestHandler<DeactivateProfileCommand, Unit>
 {
     private readonly IUserProfileRepository _repository;
 
@@ -110,7 +112,7 @@ public sealed class DeactivateProfileCommandHandler : IRequestHandler<Deactivate
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task Handle(DeactivateProfileCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeactivateProfileCommand request, CancellationToken cancellationToken)
     {
         var userProfile = await _repository.GetByIdAsync(request.UserProfileId, cancellationToken);
         if (userProfile == null)
@@ -118,6 +120,7 @@ public sealed class DeactivateProfileCommandHandler : IRequestHandler<Deactivate
 
         userProfile.Deactivate();
         await _repository.SaveChangesAsync(cancellationToken);
+        return Unit.Value;
     }
 }
 
@@ -141,7 +144,7 @@ public sealed class CreateProfileFromRegistrationCommandHandler : IRequestHandle
             return existingProfile.Id;
 
         var userProfile = UserProfile.CreateFromRegistration(request.UserId, request.Email, request.FullName, request.Avatar);
-        _repository.Add(userProfile);
+        await _repository.AddAsync(userProfile, cancellationToken);
         await _repository.SaveChangesAsync(cancellationToken);
 
         return userProfile.Id;

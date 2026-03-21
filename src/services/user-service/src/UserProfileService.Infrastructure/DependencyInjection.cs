@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using UserProfileService.Application.Interfaces;
 using UserProfileService.Infrastructure.Persistence;
+using SharedKernel.Infrastructure.EventBus;
 
 namespace UserProfileService.Infrastructure;
 
@@ -24,7 +25,8 @@ public static class DependencyInjection
                 sqlOptions.CommandTimeout(30);
             });
 
-            if (configuration.GetValue<bool>("Logging:EnableSqlLogging"))
+            var loggingSection = configuration.GetSection("Logging");
+            if (loggingSection.GetValue<bool>("EnableSqlLogging"))
             {
                 options.LogTo(Console.WriteLine);
             }

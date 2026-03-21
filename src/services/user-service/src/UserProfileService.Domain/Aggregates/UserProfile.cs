@@ -1,4 +1,4 @@
-using SharedKernel.Domain;
+using SharedKernel;
 using UserProfileService.Domain.Entities;
 using UserProfileService.Domain.Events;
 

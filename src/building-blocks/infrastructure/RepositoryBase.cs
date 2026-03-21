@@ -22,6 +22,18 @@ public abstract class RepositoryBase<TEntity, TDbContext, TId>
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
+
+
+    public Task<int> CountAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        return DbSet.Where(x => specification.IsSatisfiedBy(x)).CountAsync(cancellationToken);
+    }
+
+    public Task<TEntity?> FindAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        return DbSet.Where(x => specification.IsSatisfiedBy(x)).FirstOrDefaultAsync(cancellationToken);
+    }
+
     /// <summary>
     /// Gets a DbSet for the entity type.
     /// </summary>

@@ -3,6 +3,7 @@ using AutoMapper;
 using UserProfileService.Application.DTOs;
 using UserProfileService.Application.Interfaces;
 using UserProfileService.Application.Queries;
+using SharedKernel;
 
 namespace UserProfileService.Application.Handlers;
 

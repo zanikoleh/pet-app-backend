@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using UserProfileService.Application.Interfaces;
 using UserProfileService.Domain.Aggregates;
 using SharedKernel.Infrastructure;
+using SharedKernel;
 
 namespace UserProfileService.Infrastructure.Persistence;
 

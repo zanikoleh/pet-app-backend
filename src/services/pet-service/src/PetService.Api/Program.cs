@@ -1,5 +1,6 @@
 using PetService.Application;
 using PetService.Infrastructure;
+using SharedKernel.Infrastructure.EventBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,19 +13,14 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-var serviceBusConnectionString = builder.Configuration.GetConnectionString("AzureServiceBus")
-    ?? throw new InvalidOperationException("Connection string 'AzureServiceBus' not found.");
-
 // Add application layer
 builder.Services.AddApplication();
 
 // Add infrastructure layer with database context
 builder.Services.AddInfrastructure(connectionString);
 
-// Add event bus
-builder.Services.AddAzureServiceBusEventBus(serviceBusConnectionString, "pet-service-subscription");
-builder.Services.AddEventBusHostedService();
-
+// Add event bus using in-memory implementation
+builder.Services.AddEventBus(builder.Configuration);
 // Add CORS
 builder.Services.AddCors(options =>
 {
