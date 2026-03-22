@@ -12,7 +12,6 @@ WORKDIR /src
 COPY ["src/api-gateway/Gateway.Api/Gateway.Api.csproj", "src/api-gateway/Gateway.Api/"]
 COPY ["src/api-gateway/Gateway.Api/Program.cs", "src/api-gateway/Gateway.Api/"]
 COPY ["src/api-gateway/Gateway.Api/Properties/", "src/api-gateway/Gateway.Api/Properties/"]
-COPY ["src/api-gateway/Gateway.Api/ocelot.json", "src/api-gateway/Gateway.Api/"]
 COPY ["src/api-gateway/Gateway.Api/yarpconfig.json", "src/api-gateway/Gateway.Api/"]
 
 # Restore dependencies

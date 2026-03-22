@@ -61,7 +61,7 @@
       "identity-cluster": {
         "Destinations": {
           "identity-1": {
-            "Address": "https://localhost:44301"
+            "Address": "http://identity-service"
           }
         },
         "HttpRequest": {
@@ -71,7 +71,7 @@
       "profiles-cluster": {
         "Destinations": {
           "profiles-1": {
-            "Address": "https://localhost:44302"
+            "Address": "http://user-profile-service"
           }
         },
         "HttpRequest": {
@@ -81,7 +81,7 @@
       "files-cluster": {
         "Destinations": {
           "files-1": {
-            "Address": "https://localhost:44303"
+            "Address": "http://file-service"
           }
         },
         "HttpRequest": {
@@ -91,7 +91,7 @@
       "pets-cluster": {
         "Destinations": {
           "pets-1": {
-            "Address": "https://localhost:5000"
+            "Address": "http://pet-service"
           }
         },
         "HttpRequest": {
@@ -101,7 +101,7 @@
       "notifications-cluster": {
         "Destinations": {
           "notifications-1": {
-            "Address": "https://localhost:44304"
+            "Address": "http://notification-service"
           }
         },
         "HttpRequest": {
