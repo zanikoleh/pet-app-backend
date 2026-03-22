@@ -1,7 +1,7 @@
 # Makefile for Pet App Backend
 # Common development commands
 
-.PHONY: help build run test clean restore db-migrate docker-up docker-down logs setup init full-restart
+.PHONY: help build run test test-verbose test-coverage test-gateway test-identity test-pet clean restore db-migrate docker-up docker-down logs setup init full-restart
 
 help:
 	@echo "Pet App Backend - Build Commands"
@@ -9,18 +9,23 @@ help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  build           - Build the solution"
-	@echo "  run             - Run all services"
-	@echo "  test            - Run all tests"
-	@echo "  clean           - Clean build artifacts"
-	@echo "  restore         - Restore NuGet packages"
-	@echo "  docker-up       - Start Docker containers"
-	@echo "  docker-down     - Stop Docker containers"
-	@echo "  db-migrate      - Run database migrations"
-	@echo "  logs            - View Docker logs"
-	@echo "  setup           - Setup development environment"
-	@echo "  init            - Initialize development environment"
-	@echo "  full-restart    - Full restart of development environment"
+	@echo "  build              - Build the solution"
+	@echo "  run                - Run all services"
+	@echo "  test               - Run all tests"
+	@echo "  test-verbose       - Run all tests with detailed output"
+	@echo "  test-coverage      - Run tests with code coverage"
+	@echo "  test-gateway       - Run Gateway and Integration tests only"
+	@echo "  test-identity      - Run Identity Service tests only"
+	@echo "  test-pet           - Run Pet Service tests only"
+	@echo "  clean              - Clean build artifacts"
+	@echo "  restore            - Restore NuGet packages"
+	@echo "  docker-up          - Start Docker containers"
+	@echo "  docker-down        - Stop Docker containers"
+	@echo "  db-migrate         - Run database migrations"
+	@echo "  logs               - View Docker logs"
+	@echo "  setup              - Setup development environment"
+	@echo "  init               - Initialize development environment"
+	@echo "  full-restart       - Full restart of development environment"
 
 setup: restore build docker-up db-migrate
 	@echo "Setup complete! Services are running."
@@ -42,14 +47,31 @@ run:
 	docker-compose up -d
 
 test:
-	@echo "Running tests..."
-	@echo "Running Identity Service Domain Tests..."
-	dotnet test tests/identity-service/src/IdentityService.Domain.Tests/IdentityService.Domain.Tests.csproj -v quiet
-	@echo "Running Identity Service Application Tests..."
-	dotnet test tests/identity-service/src/IdentityService.Application.Tests/IdentityService.Application.Tests.csproj -v quiet
-	@echo "Running Pet Service Domain Tests..."
-	dotnet test tests/pet-service/src/PetService.Domain.Tests/PetService.Domain.Tests.csproj -v quiet
-	@echo "All verified tests passed!"
+	@echo "Running all test projects..."
+	@echo ""
+	@echo "=== Gateway Tests ==="
+	@echo "Running Gateway.Api.Tests..."
+	-dotnet test tests/api-gateway/Gateway.Api.Tests/Gateway.Api.Tests.csproj -v minimal
+	@echo "Running Integration Tests..."
+	-dotnet test tests/api-gateway/IntegrationTests/IntegrationTests.csproj -v minimal
+	@echo ""
+	@echo "=== Identity Service Tests ==="
+	@echo "Running IdentityService.Domain.Tests..."
+	-dotnet test tests/identity-service/src/IdentityService.Domain.Tests/IdentityService.Domain.Tests.csproj -v minimal
+	@echo "Running IdentityService.Application.Tests..."
+	-dotnet test tests/identity-service/src/IdentityService.Application.Tests/IdentityService.Application.Tests.csproj -v minimal
+	@echo "Running IdentityService.Infrastructure.Tests..."
+	-dotnet test tests/identity-service/src/IdentityService.Infrastructure.Tests/IdentityService.Infrastructure.Tests.csproj -v minimal
+	@echo ""
+	@echo "=== Pet Service Tests ==="
+	@echo "Running PetService.Domain.Tests..."
+	-dotnet test tests/pet-service/src/PetService.Domain.Tests/PetService.Domain.Tests.csproj -v minimal
+	@echo "Running PetService.Application.Tests..."
+	-dotnet test tests/pet-service/src/PetService.Application.Tests/PetService.Application.Tests.csproj -v minimal
+	@echo "Running PetService.Infrastructure.Tests..."
+	-dotnet test tests/pet-service/src/PetService.Infrastructure.Tests/PetService.Infrastructure.Tests.csproj -v minimal
+	@echo ""
+	@echo "✓ All test projects completed!"
 
 clean:
 	@echo "Cleaning build artifacts..."
@@ -89,6 +111,39 @@ db-migrate:
 logs:
 	@echo "Showing Docker logs..."
 	docker-compose logs -f
+
+test-verbose:
+	@echo "Running all tests with verbose output..."
+	-dotnet test --verbosity detailed
+
+test-coverage:
+	@echo "Running tests with verbose output and logging results..."
+	@mkdir -p coverage
+	-dotnet test tests/api-gateway/Gateway.Api.Tests/Gateway.Api.Tests.csproj --logger "trx;LogFileName=gateway.trx" --results-directory ./coverage -v minimal
+	-dotnet test tests/identity-service/src/IdentityService.Domain.Tests/IdentityService.Domain.Tests.csproj --logger "trx;LogFileName=identity-domain.trx" --results-directory ./coverage -v minimal
+	-dotnet test tests/identity-service/src/IdentityService.Application.Tests/IdentityService.Application.Tests.csproj --logger "trx;LogFileName=identity-app.trx" --results-directory ./coverage -v minimal
+	-dotnet test tests/identity-service/src/IdentityService.Infrastructure.Tests/IdentityService.Infrastructure.Tests.csproj --logger "trx;LogFileName=identity-infra.trx" --results-directory ./coverage -v minimal
+	-dotnet test tests/pet-service/src/PetService.Domain.Tests/PetService.Domain.Tests.csproj --logger "trx;LogFileName=pet-domain.trx" --results-directory ./coverage -v minimal
+	-dotnet test tests/pet-service/src/PetService.Application.Tests/PetService.Application.Tests.csproj --logger "trx;LogFileName=pet-app.trx" --results-directory ./coverage -v minimal
+	@echo "✓ Test results logged to ./coverage (TRX format)"
+	@echo "Note: For code coverage analysis, install 'dotnet tool install -g dotnet-cover' and use 'dotnet-cover' command"
+
+test-gateway:
+	@echo "Running Gateway and Integration tests..."
+	-dotnet test tests/api-gateway/Gateway.Api.Tests/Gateway.Api.Tests.csproj -v minimal
+	-dotnet test tests/api-gateway/IntegrationTests/IntegrationTests.csproj -v minimal
+
+test-identity:
+	@echo "Running Identity Service tests..."
+	-dotnet test tests/identity-service/src/IdentityService.Domain.Tests/IdentityService.Domain.Tests.csproj -v minimal
+	-dotnet test tests/identity-service/src/IdentityService.Application.Tests/IdentityService.Application.Tests.csproj -v minimal
+	-dotnet test tests/identity-service/src/IdentityService.Infrastructure.Tests/IdentityService.Infrastructure.Tests.csproj -v minimal
+
+test-pet:
+	@echo "Running Pet Service tests..."
+	-dotnet test tests/pet-service/src/PetService.Domain.Tests/PetService.Domain.Tests.csproj -v minimal
+	-dotnet test tests/pet-service/src/PetService.Application.Tests/PetService.Application.Tests.csproj -v minimal
+	-dotnet test tests/pet-service/src/PetService.Infrastructure.Tests/PetService.Infrastructure.Tests.csproj -v minimal
 
 full-restart: docker-down clean restore build docker-up db-migrate
 	@echo "Full restart complete! Services are running."

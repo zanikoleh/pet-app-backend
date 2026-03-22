@@ -34,20 +34,13 @@ jobs:
         dotnet-version: '10.0.x'
     
     - name: Restore dependencies
-      run: dotnet restore
+      run: make restore
     
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: make build
     
     - name: Run tests
-      run: |
-        dotnet test \
-          --no-build \
-          --configuration Release \
-          --verbosity normal \
-          --logger "console;verbosity=normal" \
-          --collect:"XPlat Code Coverage" \
-          --settings "$(pwd)/tests/runsettings.xml" 2>&1 | tee test-results.log
+      run: make test
       env:
         ASPNETCORE_ENVIRONMENT: Testing
         ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=petapp;Username=postgres;Password=P@ssw0rd2024;"

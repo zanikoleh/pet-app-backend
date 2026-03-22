@@ -43,6 +43,42 @@ var app = builder.Build();
 // Use CORS
 app.UseCors("AllowAll");
 
+// Add response headers middleware
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Powered-By", "Pet-App-Gateway/1.0");
+    context.Response.Headers.Append("X-Gateway-Version", "1.0");
+    
+    // Preserve custom request headers
+    if (context.Request.Headers.TryGetValue("X-Gateway-Request-Id", out var requestId))
+    {
+        context.Response.Headers.Append("X-Gateway-Request-Id", requestId);
+    }
+    
+    await next();
+});
+
+// HTTP Method Override middleware
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "POST" && context.Request.Headers.TryGetValue("X-HTTP-Method-Override", out var methodOverride))
+    {
+        context.Request.Method = methodOverride.ToString();
+    }
+    
+    await next();
+});
+
+// Health check endpoint - accepts GET and POST for flex method override support
+app.MapMethods("/health", new[] { "GET", "POST" }, () => new { status = "healthy", timestamp = DateTime.UtcNow })
+    .WithName("HealthCheck")
+    .Produces(StatusCodes.Status200OK)
+    .Produces(StatusCodes.Status503ServiceUnavailable);
+
+// Root endpoint - accepts GET and POST
+app.MapMethods("/", new[] { "GET", "POST" }, () => Results.Ok(new { message = "API Gateway - Pet App Microservices", version = "1.0" }))
+    .WithName("Root");
+
 // Enable Swagger UI
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
@@ -54,10 +90,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
     });
 }
 
-// Map YARP reverse proxy
+// Map YARP reverse proxy - must be last
 app.MapReverseProxy();
-
-app.MapGet("/", () => "API Gateway - Pet App Microservices");
 
 app.Run();
 
