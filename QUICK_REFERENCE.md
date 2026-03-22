@@ -359,17 +359,21 @@ builder.Host.ConfigureLogging(logging =>
 
 ### View Database
 ```bash
-# Connect to SQL Server
-sqlcmd -S localhost -U sa -P PetApp123!@#
+# Connect to PostgreSQL
+psql -h localhost -U postgres -d petapp
+Password: PetApp123!@#
 
 # List databases
-SELECT name FROM sys.databases;
+\l
 
-# Use database
-USE PetApp.IdentityService;
+# Connect to database
+\c PetApp.IdentityService
+
+# List tables
+\dt
 
 # View table
-SELECT * FROM Users;
+SELECT * FROM "Users";
 ```
 
 ### View Message Bus
@@ -408,28 +412,29 @@ docker-compose logs --tail=100
 | Pets | http://localhost:5000 | http://localhost:5000/swagger |
 | Notifications | https://localhost:44304 | https://localhost:44304/swagger |
 | RabbitMQ | http://localhost:15672 | (Management UI) |
-| SQL Server | localhost:1433 | (SSMS) |
+| PostgreSQL | localhost:5432 | (psql) |
 
 ## 👤 Default Credentials
 
 | Service | User | Password |
 |---------|------|----------|
-| SQL Server | sa | PetApp123!@# |
+| PostgreSQL | postgres | PetApp123!@# |
 | RabbitMQ | guest | guest |
 
 ## 💾 Database Connections
 
 ### Local Development
 ```
-Server=localhost
+Host=localhost
+Port=5432
 Database=PetApp.[ServiceName]
-User=sa
+User=postgres
 Password=PetApp123!@#
 ```
 
-### Connection String with SQL Client
+### Connection String with psql
 ```
-Server=localhost;Database=PetApp.IdentityService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+Host=localhost;Database=PetApp.IdentityService;Username=postgres;Password=PetApp123!@#;Port=5432;
 ```
 
 ## 🚨 Common Issues & Solutions
@@ -445,11 +450,11 @@ sudo lsof -ti:44301 | xargs kill -9
 ### Issue: "Database connection failed"
 **Solution**:
 ```bash
-# Verify SQL Server is running
-docker ps | grep sqlserver
+# Verify PostgreSQL is running
+docker ps | grep postgres
 
 # Check connection string
-docker-compose logs sqlserver
+docker-compose logs postgres
 ```
 
 ### Issue: "Service not accessible"

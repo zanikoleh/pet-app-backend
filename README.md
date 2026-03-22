@@ -42,7 +42,7 @@ This is a comprehensive microservices backend for the Pet App, built with .NET 1
 
 ### Supporting Infrastructure
 
-- **SQL Server**: Multi-database per service pattern
+- **PostgreSQL**: Multi-database per service pattern
 - **Azure Service Bus**: Event-driven communication between services
 - **RabbitMQ**: Local development message broker alternative
 
@@ -52,7 +52,7 @@ This is a comprehensive microservices backend for the Pet App, built with .NET 1
 
 - .NET 10 SDK
 - Docker and Docker Compose
-- SQL Server or LocalDB
+- PostgreSQL
 - Visual Studio 2022 or VS Code
 
 ### Local Development
@@ -142,7 +142,7 @@ Key configurations:
 ```json
 {
   "ConnectionStrings": {
-    "ServiceDb": "Server=...;Database=...;..."
+    "ServiceDb": "Host=localhost;Database=...;Username=postgres;Password=...;Port=5432;"
   },
   "JwtSettings": {
     "SecretKey": "your-256-bit-key",
@@ -216,9 +216,9 @@ Key configurations:
 - Verify ports are available: `netstat -an | grep LISTEN`
 
 ### Database connection issues
-- Verify SQL Server is running
+- Verify PostgreSQL is running
 - Check connection string in appsettings
-- Check firewall allows port 1433
+- Check firewall allows port 5432
 
 ### Event bus not working
 - Check RabbitMQ is running: `docker ps | grep rabbitmq`

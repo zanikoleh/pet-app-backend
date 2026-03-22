@@ -124,7 +124,7 @@
 - Swagger/OpenAPI enabled
 - CORS policy configured
 - Logging configured
-- Database migrations ready (SQL Server)
+- Database migrations ready (PostgreSQL)
 - Azure Service Bus event bus configured
 - Dependency injection fully wired
 
@@ -159,7 +159,7 @@
 1. **Update Connection Strings**
    ```
    appsettings.json:
-   - DefaultConnection: SQL Server connection string
+   - DefaultConnection: PostgreSQL connection string
    - AzureServiceBus: Azure Service Bus connection string
    ```
 
@@ -230,7 +230,7 @@ POST https://localhost:5001/api/pets/{petId}/documents?ownerId={ownerId}
 ### Clean Architecture Layers
 - ✅ Domain: Pure domain logic, no dependencies on infrastructure
 - ✅ Application: CQRS pattern with commands/queries, business orchestration
-- ✅ Infrastructure: EF Core, SQL Server, repository implementations
+- ✅ Infrastructure: EF Core, PostgreSQL, repository implementations
 - ✅ API: ASP.NET Core controllers, HTTP contract
 
 ### CQRS Pattern
@@ -269,7 +269,7 @@ src/
 ## Key Technologies
 - **Framework**: ASP.NET Core 10
 - **ORM**: Entity Framework Core 10
-- **Database**: SQL Server
+- **Database**: PostgreSQL
 - **Messaging**: Azure Service Bus
 - **API Pattern**: CQRS with MediatR
 - **Mapping**: AutoMapper

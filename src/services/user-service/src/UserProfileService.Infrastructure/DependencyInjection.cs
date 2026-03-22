@@ -19,10 +19,10 @@ public static class DependencyInjection
 
         services.AddDbContext<UserProfileServiceDbContext>((provider, options) =>
         {
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseNpgsql(connectionString, postgresOptions =>
             {
-                sqlOptions.MigrationsAssembly("UserProfileService.Infrastructure");
-                sqlOptions.CommandTimeout(30);
+                postgresOptions.MigrationsAssembly("UserProfileService.Infrastructure");
+                postgresOptions.CommandTimeout(30);
             });
 
             var loggingSection = configuration.GetSection("Logging");

@@ -20,10 +20,10 @@ public static class DependencyInjection
 
         services.AddDbContext<FileServiceDbContext>((provider, options) =>
         {
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseNpgsql(connectionString, postgresOptions =>
             {
-                sqlOptions.MigrationsAssembly("FileService.Infrastructure");
-                sqlOptions.CommandTimeout(30);
+                postgresOptions.MigrationsAssembly("FileService.Infrastructure");
+                postgresOptions.CommandTimeout(30);
             });
 
             var loggingSection = configuration.GetSection("Logging");

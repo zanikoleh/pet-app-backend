@@ -4,10 +4,10 @@ public class IntegrationTestsFixture
 {
     public const string TestDatabaseName = "PetApp_IntegrationTests";
     public const string TestConnectionString = 
-        "Server=(localdb)\\mssqllocaldb;Database=PetApp_IntegrationTests;Integrated Security=true;";
+        "Host=localhost;Database=PetApp_IntegrationTests;Username=postgres;Password=TestPassword123!@#;Port=5432;";
 
     public static string GetConnectionString(string databaseName)
     {
-        return $"Server=(localdb)\\mssqllocaldb;Database={databaseName};Integrated Security=true;";
+        return $"Host=localhost;Database={databaseName};Username=postgres;Password=TestPassword123!@#;Port=5432;";
     }
 }

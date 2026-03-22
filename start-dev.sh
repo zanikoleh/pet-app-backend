@@ -23,7 +23,7 @@ if [ $? -eq 0 ]; then
     echo "  - Notification Service: https://localhost:44304"
     echo "  - Pet Service: http://localhost:5000"
     echo ""
-    echo "SQL Server: localhost:1433 (User: sa, Password: PetApp123!@#)"
+    echo "PostgreSQL: localhost:5432 (User: postgres, Password: PetApp123!@#)"
     echo "RabbitMQ: http://localhost:15672 (User: guest, Password: guest)"
 else
     echo "✗ Tests failed!"

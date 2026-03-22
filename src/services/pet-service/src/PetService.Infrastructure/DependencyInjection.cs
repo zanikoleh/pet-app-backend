@@ -14,12 +14,11 @@ public static class DependencyInjection
     {
         // Register DbContext
         services.AddDbContext<PetServiceDbContext>(options =>
-            options.UseSqlServer(
+            options.UseNpgsql(
                 connectionString,
-                sqlServerOptions => sqlServerOptions
+                postgresOptions => postgresOptions
                     .MigrationsAssembly(typeof(DependencyInjection).Assembly.GetName().Name)
-                    .CommandTimeout(30)
-                    .EnableRetryOnFailure(2, TimeSpan.FromSeconds(5), null)));
+                    .CommandTimeout(30)));
 
         // Register repositories
         services.AddScoped<IPetRepository, PetRepository>();

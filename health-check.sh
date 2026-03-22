@@ -44,7 +44,7 @@ check_docker_service() {
 }
 
 echo "📦 Container Status:"
-check_docker_service "sqlserver"
+check_docker_service "postgres"
 check_docker_service "rabbitmq"
 check_docker_service "identity-service"
 check_docker_service "user-profile-service"

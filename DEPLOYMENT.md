@@ -12,7 +12,7 @@
 
 ### Prerequisites
 - .NET 10.0 SDK
-- SQL Server or LocalDB
+- PostgreSQL
 - Docker Desktop (optional, for local containers)
 - Visual Studio 2022 or VS Code
 
@@ -108,11 +108,11 @@ az group create --name pet-app-rg --location eastus
 # Create Azure Container Registry
 az acr create --resource-group pet-app-rg --name petappregistry --sku Basic
 
-# Create Azure SQL Database
-az sql server create --name pet-app-db-server --resource-group pet-app-rg --admin-user sqladmin --admin-password <strong-password>
-az sql db create --name pet-app-identity --server pet-app-db-server --resource-group pet-app-rg
-az sql db create --name pet-app-profile --server pet-app-db-server --resource-group pet-app-rg
-az sql db create --name pet-app-files --server pet-app-db-server --resource-group pet-app-rg
+# Create Azure PostgreSQL Database
+az postgres server create --name pet-app-db-server --resource-group pet-app-rg --admin-user postgres --admin-password <strong-password>
+az postgres db create --name pet-app-identity --server pet-app-db-server --resource-group pet-app-rg
+az postgres db create --name pet-app-profile --server pet-app-db-server --resource-group pet-app-rg
+az postgres db create --name pet-app-files --server pet-app-db-server --resource-group pet-app-rg
 az sql db create --name pet-app-pets --server pet-app-db-server --resource-group pet-app-rg
 
 # Create Azure Service Bus
@@ -220,7 +220,7 @@ kubectl apply -f k8s/ingress.yaml -n pet-app
 {
   "ASPNETCORE_ENVIRONMENT": "Development",
   "ConnectionStrings": {
-    "ServiceDb": "Server=(localdb)\\mssqllocaldb;Database=...;Integrated Security=true;"
+    "ServiceDb": "Host=localhost;Database=...;Username=postgres;Password=...;Port=5432;"
   },
   "JwtSettings": {
     "SecretKey": "dev-key",
@@ -235,7 +235,7 @@ kubectl apply -f k8s/ingress.yaml -n pet-app
 {
   "ASPNETCORE_ENVIRONMENT": "Staging",
   "ConnectionStrings": {
-    "ServiceDb": "Server=tcp:pet-app-db-server.database.windows.net,1433;..."
+    "ServiceDb": "Host=pet-app-db.postgres.database.azure.com;Database=...;Username=postgres@pet-app-db;Port=5432;..."
   },
   "JwtSettings": {
     "SecretKey": "staging-key-from-keyvault",
@@ -250,7 +250,7 @@ kubectl apply -f k8s/ingress.yaml -n pet-app
 {
   "ASPNETCORE_ENVIRONMENT": "Production",
   "ConnectionStrings": {
-    "ServiceDb": "Server=tcp:pet-app-db-server.database.windows.net,1433;..."
+    "ServiceDb": "Host=pet-app-db.postgres.database.azure.com;Database=...;Username=postgres@pet-app-db;Port=5432;..."
   },
   "JwtSettings": {
     "SecretKey": "production-key-from-keyvault",

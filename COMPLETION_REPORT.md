@@ -14,7 +14,7 @@ The Pet App Backend has been fully implemented as a comprehensive microservices 
 
 **Created Files:**
 1. **docker-compose.yml** (270 lines)
-   - 8 services: 6 microservices + SQL Server + RabbitMQ
+   - 8 services: 6 microservices + PostgreSQL + RabbitMQ
    - Health checks for all services
    - Volume persistence for databases
    - Network isolation with custom bridge network
@@ -69,7 +69,7 @@ The Pet App Backend has been fully implemented as a comprehensive microservices 
 
 **GitHub Actions Workflow** (.github/workflows/build-test.yml)
 - Triggers on push to main/develop and pull requests
-- SQL Server service container for tests
+- PostgreSQL service container for tests
 - .NET 10.0 SDK setup
 - NuGet restore and build
 - Test execution with coverage reporting
@@ -137,7 +137,7 @@ The Pet App Backend has been fully implemented as a comprehensive microservices 
 ✅ **FluentValidation 11.9** - Input validation
 ✅ **BCrypt.Net-Core 1.6** - Password hashing
 ✅ **Azure Service Bus** - Message broker
-✅ **SQL Server** - Database
+✅ **PostgreSQL** - Database
 
 ---
 
@@ -180,7 +180,7 @@ The Pet App Backend has been fully implemented as a comprehensive microservices 
 ### Infrastructure
 
 - **Event Bus**: Azure Service Bus with RabbitMQ local alternative
-- **Database**: SQL Server with per-service pattern
+- **Database**: PostgreSQL with per-service pattern
 - **Authentication**: JWT + OAuth 2.0 (Google, Facebook, Apple)
 - **Caching**: Redis-ready architecture (not yet implemented)
 - **Monitoring**: Health checks + logging infrastructure
@@ -246,7 +246,7 @@ dotnet test /p:CollectCoverage=true /p:CoverageFormat=opencover
 ### Local Development
 ```bash
 docker-compose up
-# All services running on localhost with local SQL Server
+# All services running on localhost with local PostgreSQL
 ```
 
 ### Azure Deployment
@@ -281,7 +281,7 @@ docker-compose up
 
 # Optional:
 - Visual Studio 2022
-- SQL Server Management Studio
+- pgAdmin or psql CLI
 ```
 
 ### Get Started
@@ -397,7 +397,7 @@ docker-compose up
 ## Configuration Management
 
 ### Environments
-- **Development**: appsettings.Development.json (localdb)
+- **Development**: appsettings.Development.json (PostgreSQL)
 - **Staging**: appsettings.Staging.json (Azure SQL)
 - **Production**: Environment variables from Key Vault
 
@@ -425,7 +425,7 @@ docker-compose logs -f identity-service  # Specific service
 
 ### Database Access
 ```bash
-# SQL Server connection
+# PostgreSQL connection
 Server: localhost
 User: sa
 Password: PetApp123!@#

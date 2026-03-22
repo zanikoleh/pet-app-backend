@@ -42,7 +42,7 @@
          │                                                      │  │
          ▼──────────────────────────────────┬───────────────────┘  │
     ┌──────────────────────────────────┐   │                      │
-    │      SQL Server Database         │   │                      │
+    │      PostgreSQL Database         │   │                      │
     │                                  │   │                      │
     │  ┌──────────────────────────┐   │   │                      │
     │  │ Identity-Service DB      │   │   │                      │
@@ -352,7 +352,7 @@ Azure Service Bus
 ### Local Development
 ```
 Docker Compose
-    ├─ SQL Server (1433)
+    ├─ PostgreSQL (5432)
     ├─ RabbitMQ (5672)
     ├─ Identity Service
     ├─ Profile Service

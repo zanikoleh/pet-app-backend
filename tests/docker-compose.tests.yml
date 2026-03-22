@@ -4,17 +4,17 @@ version: '3.8'
 # This is a minimal setup for CI/CD pipelines
 
 services:
-  # SQL Server for tests
-  sqlserver-tests:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  # PostgreSQL for tests
+  postgres-tests:
+    image: postgres:16-alpine
     environment:
-      SA_PASSWORD: "TestPassword123!@#"
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Developer"
+      POSTGRES_PASSWORD: "TestPassword123!@#"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "petapp"
     ports:
-      - "1434:1433"
+      - "5433:5432"
     volumes:
-      - sqlserver_tests_data:/var/opt/mssql
+      - postgres_tests_data:/var/lib/postgresql/data
 
   # RabbitMQ for tests
   rabbitmq-tests:
@@ -28,5 +28,5 @@ services:
       - rabbitmq_tests_data:/var/lib/rabbitmq
 
 volumes:
-  sqlserver_tests_data:
+  postgres_tests_data:
   rabbitmq_tests_data:

@@ -30,7 +30,7 @@ pet-app-backend/
 ### Development
 - Target Framework: .NET 10.0
 - Configuration: Debug
-- Database: SQL Server LocalDB
+- Database: PostgreSQL
 - Message Bus: RabbitMQ (local)
 
 ### Staging
@@ -166,7 +166,7 @@ dotnet ef migrations remove --project src/services/identity-service/src/Identity
 
 ### Test Failures
 - Check database connection string
-- Verify SQL Server is running
+- Verify PostgreSQL is running
 - Check RabbitMQ is accessible
 - Review test logs for details
 

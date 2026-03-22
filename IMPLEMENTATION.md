@@ -69,7 +69,7 @@ This document summarizes the complete microservices backend implementation for t
    - RabbitMQ local alternative
 
 2. **Database**
-   - SQL Server per service pattern
+   - PostgreSQL per service pattern
    - Entity Framework Core 10
    - Automatic migrations at startup
    - Repository pattern implementation
@@ -192,7 +192,7 @@ dotnet test /p:CollectCoverage=true
 - API Gateway: Port 44300
 
 ### Supporting Containers
-- SQL Server: Port 1433
+- PostgreSQL: Port 5432
 - RabbitMQ: Ports 5672 (AMQP), 15672 (Management UI)
 
 ### Quick Start
@@ -435,7 +435,7 @@ curl https://localhost:44301/health
 
 ### Troubleshooting
 1. **Services won't start**: Check Docker is running, verify ports available
-2. **Database connection issues**: Verify SQL Server, check connection string
+2. **Database connection issues**: Verify PostgreSQL, check connection string
 3. **Event bus issues**: Verify RabbitMQ/Azure Service Bus connectivity
 4. **Authentication failing**: Check JWT secret key configuration
 

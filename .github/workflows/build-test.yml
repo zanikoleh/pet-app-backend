@@ -11,18 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
+      postgres:
+        image: postgres:16-alpine
         env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: P@ssw0rd2024
+          POSTGRES_PASSWORD: P@ssw0rd2024
+          POSTGRES_USER: postgres
+          POSTGRES_DB: petapp
         options: >-
-          --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd2024 -Q 'SELECT 1' || exit 1"
+          --health-cmd="pg_isready -U postgres -d petapp"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 1433:1433
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v3
@@ -41,7 +42,7 @@ jobs:
     - name: Run tests
       run: dotnet test --no-build --verbosity normal --configuration Release
       env:
-        ConnectionString: "Server=localhost;User Id=sa;Password=P@ssw0rd2024;"
+        ConnectionString: "Host=localhost;Database=petapp;Username=postgres;Password=P@ssw0rd2024;Port=5432;"
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3

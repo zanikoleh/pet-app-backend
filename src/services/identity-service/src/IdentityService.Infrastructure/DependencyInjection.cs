@@ -20,10 +20,10 @@ public static class DependencyInjection
 
         services.AddDbContext<IdentityServiceDbContext>((provider, options) =>
         {
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseNpgsql(connectionString, postgresOptions =>
             {
-                sqlOptions.MigrationsAssembly("IdentityService.Infrastructure");
-                sqlOptions.CommandTimeout(30);
+                postgresOptions.MigrationsAssembly("IdentityService.Infrastructure");
+                postgresOptions.CommandTimeout(30);
             });
 
             // Enable query logging in development

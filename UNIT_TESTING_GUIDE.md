@@ -240,7 +240,7 @@ public async Task Handle_GetPaginatedQuery_ShouldReturnPagedResult()
 **Key Patterns**:
 
 ```csharp
-// Test repository CRUD operations with LocalDB
+// Test repository CRUD operations with PostgreSQL
 [Fact]
 public async Task AddAsync_ValidEntity_ShouldPersistToDatabase()
 {
@@ -305,17 +305,17 @@ public void DbContext_Configuration_ShouldHaveCorrectMappings()
 **Database Setup**:
 
 ```csharp
-// Use LocalDB for infrastructure tests
+// Use PostgreSQL for infrastructure tests
 private static string CreateTestDatabaseName() => 
     $"TestDb_{Guid.NewGuid():N}";
 
 protected DbContext CreateTestDbContext(string? databaseName = null)
 {
     var connectionString = 
-        $"Server=(localdb)\\mssqllocaldb;Database={databaseName ?? CreateTestDatabaseName()};Integrated Security=true;";
+        $"Host=localhost;Database={databaseName ?? CreateTestDatabaseName()};Username=postgres;Password=TestPassword123!@#;Port=5432;";
     
     var options = new DbContextOptionsBuilder<AppDbContext>()
-        .UseSqlServer(connectionString)
+        .UseNpgsql(connectionString)
         .Options;
     
     var context = new AppDbContext(options);
@@ -536,7 +536,7 @@ For each of the 5 services (Identity, User, File, Notification), follow this seq
 
 1. Create DbContext test fixture
 2. Create tests in `{Service}.Infrastructure.Tests/Repositories/`
-3. Test with LocalDB
+3. Test with PostgreSQL
 4. Verify:
    - Persistence
    - Query specifications
@@ -606,7 +606,7 @@ public void Handle_ValidInput_ShouldReturnResult()
 | DateTime comparison failures | Use `.BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1))` |
 | DomainEvents collection is empty | Remember to call `.DomainEvents.ToList()` to materialize |
 | Mock not being called | Check exact parameter matching in `.Setup()` |
-| LocalDB connection fails | Verify `(localdb)\mssqllocaldb` instance exists |
+| LocalDB connection fails | Verify PostgreSQL instance is running |
 
 ---
 
@@ -626,7 +626,7 @@ public void Handle_ValidInput_ShouldReturnResult()
 1. ✅ Complete Pet Service (Domain + Application tests done)
 2. Copy Pet Service test structure to other services
 3. Adapt tests for service-specific domain models
-4. Add Infrastructure tests with LocalDB
+4. Add Infrastructure tests with PostgreSQL
 5. Add API endpoint tests
 6. Achieve target coverage for all layers
 7. Configure CI/CD to run tests on every commit

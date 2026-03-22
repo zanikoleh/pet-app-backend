@@ -55,7 +55,7 @@
   - Complete testing structure overview
   - Layer-by-layer testing patterns with examples
   - Mocking strategies for all dependencies
-  - Database setup patterns (LocalDB)
+  - Database setup patterns (PostgreSQL)
   - WebApplicationFactory setup guides
   - Test data builder patterns
   - Running and filtering tests
@@ -123,7 +123,7 @@ tests/
 **All 5 services** - Estimated 2-3 hours
 
 For each service, create:
-- Repository tests with LocalDB
+- Repository tests with PostgreSQL
 - DbContext configuration tests
 - Specification pattern tests
 - Transaction tests
@@ -176,13 +176,13 @@ Copy Pet Service application tests pattern for:
    tests/{ServiceName}.Infrastructure.Tests/Repositories/{AggregateNameRepositoryTests}.cs
    ```
 
-2. **Setup LocalDB fixture**:
+2. **Setup PostgreSQL Test Database**:
    ```csharp
    protected DbContext CreateTestDbContext(string databaseName)
    {
-       var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={databaseName};";
+       var connectionString = $"Host=localhost;Database={databaseName};Username=postgres;Password=TestPassword123!@#;Port=5432;";
        var options = new DbContextOptionsBuilder<DbContext>()
-           .UseSqlServer(connectionString)
+           .UseNpgsql(connectionString)
            .Options;
        return new DbContext(options);
    }
