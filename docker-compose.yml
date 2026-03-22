@@ -4,6 +4,7 @@ services:
   # SQL Server Database
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     environment:
       SA_PASSWORD: "PetApp123!@#"
       ACCEPT_EULA: "Y"

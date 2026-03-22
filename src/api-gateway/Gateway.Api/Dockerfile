@@ -8,15 +8,22 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy sln and project files
-COPY ["pet-app-backend.sln", "."]
-COPY ["src/", "src/"]
+# Copy project files
+COPY ["src/api-gateway/Gateway.Api/Gateway.Api.csproj", "src/api-gateway/Gateway.Api/"]
+COPY ["src/api-gateway/Gateway.Api/Program.cs", "src/api-gateway/Gateway.Api/"]
+COPY ["src/api-gateway/Gateway.Api/Properties/", "src/api-gateway/Gateway.Api/Properties/"]
+COPY ["src/api-gateway/Gateway.Api/ocelot.json", "src/api-gateway/Gateway.Api/"]
+COPY ["src/api-gateway/Gateway.Api/yarpconfig.json", "src/api-gateway/Gateway.Api/"]
 
-# Build the solution
-RUN dotnet build "pet-app-backend.sln" -c Release -o /app/build
+# Restore dependencies
+RUN dotnet restore "src/api-gateway/Gateway.Api/Gateway.Api.csproj"
+
+# Build the project
+RUN dotnet build "src/api-gateway/Gateway.Api/Gateway.Api.csproj" -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
+WORKDIR /src
 RUN dotnet publish "src/api-gateway/Gateway.Api/Gateway.Api.csproj" -c Release -o /app/publish
 
 # Runtime stage
@@ -24,3 +31,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Gateway.Api.dll"]
+
