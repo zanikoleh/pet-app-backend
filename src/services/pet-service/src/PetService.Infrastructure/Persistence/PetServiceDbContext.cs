@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PetService.Domain.Aggregates;
+using SharedKernel;
 using SharedKernel.Infrastructure;
 using SharedKernel.Infrastructure.EventBus;
 
@@ -27,5 +28,8 @@ public sealed class PetServiceDbContext : ApplicationDbContextBase
 
         // Configure all entities
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PetServiceDbContext).Assembly);
+
+        // Ignore DomainEvent type - it's not a database entity
+        modelBuilder.Ignore<DomainEvent>();
     }
 }

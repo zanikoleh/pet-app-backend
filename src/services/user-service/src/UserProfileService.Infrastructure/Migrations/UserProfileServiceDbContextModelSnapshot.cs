@@ -2,13 +2,13 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserProfileService.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace UserProfileService.Infrastructure.Persistence.Migrations
+namespace UserProfileService.Infrastructure.Migrations
 {
     [DbContext(typeof(UserProfileServiceDbContext))]
     partial class UserProfileServiceDbContextModelSnapshot : ModelSnapshot
@@ -25,27 +25,27 @@ namespace UserProfileService.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("UserProfileService.Domain.Aggregates.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(254)
-                        .HasColumnType("nvarchar(254)");
+                        .HasColumnType("character varying(254)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Version")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -64,47 +64,44 @@ namespace UserProfileService.Infrastructure.Persistence.Migrations
                     b.OwnsOne("UserProfileService.Domain.Entities.ProfileData", "Profile", b1 =>
                         {
                             b1.Property<Guid>("UserProfileId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Address")
                                 .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)");
+                                .HasColumnType("character varying(200)");
 
                             b1.Property<string>("Bio")
                                 .HasMaxLength(500)
-                                .HasColumnType("nvarchar(500)");
+                                .HasColumnType("character varying(500)");
 
                             b1.Property<string>("City")
                                 .HasMaxLength(50)
-                                .HasColumnType("nvarchar(50)");
+                                .HasColumnType("character varying(50)");
 
                             b1.Property<string>("Country")
                                 .HasMaxLength(50)
-                                .HasColumnType("nvarchar(50)");
+                                .HasColumnType("character varying(50)");
 
                             b1.Property<DateTime?>("DateOfBirth")
-                                .HasColumnType("datetime2");
+                                .HasColumnType("timestamp with time zone");
 
                             b1.Property<string>("FirstName")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("character varying(100)");
 
                             b1.Property<string>("LastName")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                                .HasColumnType("character varying(100)");
 
                             b1.Property<string>("PhoneNumber")
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)");
+                                .HasColumnType("character varying(20)");
 
                             b1.Property<string>("ProfilePictureUrl")
                                 .HasMaxLength(500)
-                                .HasColumnType("nvarchar(500)");
+                                .HasColumnType("character varying(500)");
 
                             b1.HasKey("UserProfileId");
 
@@ -117,53 +114,50 @@ namespace UserProfileService.Infrastructure.Persistence.Migrations
                     b.OwnsOne("UserProfileService.Domain.Entities.UserPreferences", "Preferences", b1 =>
                         {
                             b1.Property<Guid>("UserProfileId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<bool>("EmailNotifications")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(true);
-
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Language")
                                 .IsRequired()
                                 .ValueGeneratedOnAdd()
                                 .HasMaxLength(10)
-                                .HasColumnType("nvarchar(10)")
+                                .HasColumnType("character varying(10)")
                                 .HasDefaultValue("en");
 
                             b1.Property<bool>("NotificationsEnabled")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(true);
 
                             b1.Property<bool>("PushNotifications")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(true);
 
                             b1.Property<bool>("ReceiveNewsletter")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(true);
 
                             b1.Property<bool>("ReceivePromotions")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(true);
 
                             b1.Property<bool>("SmsNotifications")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
+                                .HasColumnType("boolean")
                                 .HasDefaultValue(false);
 
                             b1.Property<string>("Timezone")
                                 .IsRequired()
                                 .ValueGeneratedOnAdd()
                                 .HasMaxLength(50)
-                                .HasColumnType("nvarchar(50)")
+                                .HasColumnType("character varying(50)")
                                 .HasDefaultValue("UTC");
 
                             b1.HasKey("UserProfileId");

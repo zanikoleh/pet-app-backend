@@ -24,8 +24,8 @@ public class UserProfile : AggregateRoot<Guid>
     {
         UserId = userId;
         Email = email;
-        Profile = new ProfileData(Guid.NewGuid());
-        Preferences = new UserPreferences(Guid.NewGuid());
+        Profile = new ProfileData();
+        Preferences = new UserPreferences();
         CreatedAt = DateTime.UtcNow;
         IsActive = true;
 

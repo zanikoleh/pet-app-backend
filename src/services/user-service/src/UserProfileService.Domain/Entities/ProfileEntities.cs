@@ -5,7 +5,7 @@ namespace UserProfileService.Domain.Entities;
 /// <summary>
 /// Represents a user profile - child entity of UserProfile aggregate.
 /// </summary>
-public class ProfileData : Entity<Guid>
+public class ProfileData
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
@@ -17,9 +17,7 @@ public class ProfileData : Entity<Guid>
     public string? Country { get; set; }
     public string? ProfilePictureUrl { get; set; }
 
-    protected ProfileData() { }
-
-    public ProfileData(Guid id) : base(id)
+    public ProfileData()
     {
     }
 
@@ -43,7 +41,7 @@ public class ProfileData : Entity<Guid>
 /// <summary>
 /// Represents user preferences - child entity of UserProfile aggregate.
 /// </summary>
-public class UserPreferences : Entity<Guid>
+public class UserPreferences
 {
     public string Language { get; set; } = "en";
     public string Timezone { get; set; } = "UTC";
@@ -54,9 +52,7 @@ public class UserPreferences : Entity<Guid>
     public bool ReceivePromotions { get; set; } = true;
     public bool ReceiveNewsletter { get; set; } = true;
 
-    protected UserPreferences() { }
-
-    public UserPreferences(Guid id) : base(id)
+    public UserPreferences()
     {
     }
 

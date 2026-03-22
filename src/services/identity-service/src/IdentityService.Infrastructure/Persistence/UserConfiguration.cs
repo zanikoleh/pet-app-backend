@@ -68,6 +68,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             rt.Property(r => r.ExpiresAt);
             rt.Property(r => r.CreatedAt);
             rt.Property(r => r.IsRevoked);
+
+            rt.Ignore(p => p.DomainEvents);
         });
 
         // Value object: Role

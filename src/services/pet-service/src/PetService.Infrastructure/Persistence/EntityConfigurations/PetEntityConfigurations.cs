@@ -78,6 +78,9 @@ public sealed class PetConfiguration : IEntityTypeConfiguration<Pet>
 
         builder.HasIndex(p => new { p.OwnerId, p.CreatedAt })
             .HasDatabaseName("IX_Pets_OwnerId_CreatedAt");
+
+        // Ignore DomainEvents collection - not a database entity
+        builder.Ignore(p => p.DomainEvents);
     }
 }
 
@@ -122,6 +125,9 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
         // Index for finding photos by pet
         builder.HasIndex(ph => ph.PetId)
             .HasDatabaseName("IX_Photos_PetId");
+
+        // Ignore DomainEvents collection - not a database entity
+        builder.Ignore(ph => ph.DomainEvents);
     }
 }
 
@@ -170,5 +176,8 @@ public sealed class DocumentConfiguration : IEntityTypeConfiguration<Document>
 
         builder.HasIndex(d => new { d.PetId, d.Category })
             .HasDatabaseName("IX_Documents_PetId_Category");
+
+        // Ignore DomainEvents collection - not a database entity
+        builder.Ignore(d => d.DomainEvents);
     }
 }
