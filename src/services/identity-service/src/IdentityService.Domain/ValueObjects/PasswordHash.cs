@@ -22,6 +22,17 @@ public sealed class PasswordHash : ValueObject
         return new PasswordHash(hash);
     }
 
+    /// <summary>
+    /// Creates a PasswordHash instance from an existing hash value (for persistence/loading from database).
+    /// </summary>
+    public static PasswordHash FromHash(string hash)
+    {
+        if (string.IsNullOrWhiteSpace(hash))
+            throw new DomainException("Hash value cannot be null or empty.");
+        
+        return new PasswordHash(hash);
+    }
+
     public bool Verify(string password)
     {
         return BCrypt.Net.BCrypt.Verify(password, Value);

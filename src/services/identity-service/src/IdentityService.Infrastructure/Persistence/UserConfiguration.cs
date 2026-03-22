@@ -27,13 +27,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired()
             .HasMaxLength(254);
 
-        // Value object: PasswordHash
+        // Value object: PasswordHash (nullable for OAuth-only users)
         builder.Property(u => u.PasswordHash)
             .HasConversion(
-                ph => ph!.Value,
-                v => PasswordHash.Create(v))
+                ph => ph == null ? null : ph.Value,
+                v => v == null ? null : PasswordHash.FromHash(v))
             .HasColumnName("PasswordHash")
-            .IsRequired();
+            .IsRequired(false);
 
         // Scalar properties
         //builder.Property(u => u.FullName)
@@ -46,7 +46,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.IsActive);
         builder.Property(u => u.LastLoginAt);
 
-                // Owned collections
+        // Owned collections - Use navigation property with LazyLoadingBehavior disabled
         builder.OwnsMany(u => u.OAuthProviders, oal =>
         {
             oal.ToTable("OAuthProviderLinks");

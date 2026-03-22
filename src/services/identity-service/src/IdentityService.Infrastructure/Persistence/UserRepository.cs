@@ -18,8 +18,10 @@ public class UserRepository : RepositoryBase<User, IdentityServiceDbContext, Gui
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToLowerInvariant();
-        return await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Email.Value.ToLower() == normalizedEmail, cancellationToken);
+        var user = _dbContext.Users
+            .AsEnumerable()
+            .FirstOrDefault(u => u.Email.Value.ToLowerInvariant() == normalizedEmail);
+        return await Task.FromResult(user);
     }
 
     public async Task<User?> GetByOAuthProviderAsync(
@@ -36,7 +38,9 @@ public class UserRepository : RepositoryBase<User, IdentityServiceDbContext, Gui
     public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)
     {
         var normalizedEmail = email.ToLowerInvariant();
-        return await _dbContext.Users
-            .AnyAsync(u => u.Email.Value.ToLower() == normalizedEmail, cancellationToken);
+        var exists = _dbContext.Users
+            .AsEnumerable()
+            .Any(u => u.Email.Value.ToLowerInvariant() == normalizedEmail);
+        return await Task.FromResult(exists);
     }
 }

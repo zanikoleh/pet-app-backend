@@ -22,8 +22,8 @@ public sealed class User : AggregateRoot<Guid>
     private readonly List<OAuthProvider> _oauthProviders = new();
     private readonly List<RefreshToken> _refreshTokens = new();
 
-    public IReadOnlyCollection<OAuthProvider> OAuthProviders => _oauthProviders.AsReadOnly();
-    public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
+    public IReadOnlyCollection<OAuthProvider> OAuthProviders => _oauthProviders;
+    public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens;
 
     private User() { }
 

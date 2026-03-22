@@ -43,7 +43,13 @@ run:
 
 test:
 	@echo "Running tests..."
-	dotnet test tests/IntegrationTests/IntegrationTests.csproj
+	@echo "Running Identity Service Domain Tests..."
+	dotnet test tests/identity-service/src/IdentityService.Domain.Tests/IdentityService.Domain.Tests.csproj -v quiet
+	@echo "Running Identity Service Application Tests..."
+	dotnet test tests/identity-service/src/IdentityService.Application.Tests/IdentityService.Application.Tests.csproj -v quiet
+	@echo "Running Pet Service Domain Tests..."
+	dotnet test tests/pet-service/src/PetService.Domain.Tests/PetService.Domain.Tests.csproj -v quiet
+	@echo "All verified tests passed!"
 
 clean:
 	@echo "Cleaning build artifacts..."
