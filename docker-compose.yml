@@ -181,11 +181,9 @@ services:
       dockerfile: src/api-gateway/Gateway.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ASPNETCORE_URLS=http://+:8080
     ports:
-      - "44300:443"
+      - "44300:8080"
     depends_on:
       - identity-service
       - user-profile-service
@@ -194,8 +192,6 @@ services:
       - notification-service
     networks:
       - pet-app-network
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
 volumes:
   postgres_data:

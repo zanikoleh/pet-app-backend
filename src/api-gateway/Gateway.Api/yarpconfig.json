@@ -8,7 +8,7 @@
         "ClusterId": "identity-cluster",
         "Transforms": [
           {
-            "PathPrefix": "/identity"
+            "PathRemovePrefix": "/identity"
           }
         ]
       },
@@ -19,7 +19,7 @@
         "ClusterId": "profiles-cluster",
         "Transforms": [
           {
-            "PathPrefix": "/profiles"
+            "PathRemovePrefix": "/profiles"
           }
         ]
       },
@@ -30,7 +30,7 @@
         "ClusterId": "files-cluster",
         "Transforms": [
           {
-            "PathPrefix": "/files"
+            "PathRemovePrefix": "/files"
           }
         ]
       },
@@ -41,7 +41,7 @@
         "ClusterId": "pets-cluster",
         "Transforms": [
           {
-            "PathPrefix": "/pets"
+            "PathRemovePrefix": "/pets"
           }
         ]
       },
@@ -52,7 +52,7 @@
         "ClusterId": "notifications-cluster",
         "Transforms": [
           {
-            "PathPrefix": "/notifications"
+            "PathRemovePrefix": "/notifications"
           }
         ]
       }
