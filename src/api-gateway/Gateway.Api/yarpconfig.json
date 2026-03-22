@@ -8,8 +8,7 @@
         "ClusterId": "identity-cluster",
         "Transforms": [
           {
-            "PathPattern": "/identity/{**catch-all}",
-            "PathReplacement": "/api/{catch-all}"
+            "PathPrefix": "/identity"
           }
         ]
       },
@@ -20,8 +19,7 @@
         "ClusterId": "profiles-cluster",
         "Transforms": [
           {
-            "PathPattern": "/profiles/{**catch-all}",
-            "PathReplacement": "/api/{catch-all}"
+            "PathPrefix": "/profiles"
           }
         ]
       },
@@ -32,8 +30,7 @@
         "ClusterId": "files-cluster",
         "Transforms": [
           {
-            "PathPattern": "/files/{**catch-all}",
-            "PathReplacement": "/api/{catch-all}"
+            "PathPrefix": "/files"
           }
         ]
       },
@@ -44,8 +41,7 @@
         "ClusterId": "pets-cluster",
         "Transforms": [
           {
-            "PathPattern": "/pets/{**catch-all}",
-            "PathReplacement": "/api/{catch-all}"
+            "PathPrefix": "/pets"
           }
         ]
       },
@@ -56,8 +52,7 @@
         "ClusterId": "notifications-cluster",
         "Transforms": [
           {
-            "PathPattern": "/notifications/{**catch-all}",
-            "PathReplacement": "/api/{catch-all}"
+            "PathPrefix": "/notifications"
           }
         ]
       }

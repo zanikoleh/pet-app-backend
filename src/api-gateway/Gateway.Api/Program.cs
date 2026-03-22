@@ -42,3 +42,5 @@ app.MapReverseProxy();
 app.MapGet("/", () => "API Gateway - Pet App Microservices");
 
 app.Run();
+
+public partial class Program { }
