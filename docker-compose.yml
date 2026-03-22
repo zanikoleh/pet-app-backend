@@ -1,22 +1,21 @@
 version: '3.8'
 
 services:
-  # SQL Server Database
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    platform: linux/amd64
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
     environment:
-      SA_PASSWORD: "PetApp123!@#"
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Developer"
+      POSTGRES_PASSWORD: "PetApp123!@#"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "petapp"
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - pet-app-network
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "PetApp123!@#", "-Q", "SELECT 1"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d petapp"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -50,7 +49,7 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
-      - ConnectionStrings__IdentityServiceDb=Server=sqlserver;Database=PetApp.IdentityService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - ConnectionStrings__IdentityServiceDb=Host=postgres;Database=PetApp.IdentityService;Username=postgres;Password=PetApp123!@#;
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
@@ -58,7 +57,7 @@ services:
       - "44301:443"
       - "5001:80"
     depends_on:
-      sqlserver:
+      postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -77,7 +76,7 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
-      - ConnectionStrings__UserProfileServiceDb=Server=sqlserver;Database=PetApp.UserProfileService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - ConnectionStrings__UserProfileServiceDb=Host=postgres;Database=PetApp.UserProfileService;Username=postgres;Password=PetApp123!@#;
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
@@ -85,7 +84,7 @@ services:
       - "44302:443"
       - "5002:80"
     depends_on:
-      sqlserver:
+      postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -106,15 +105,15 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
-      - ConnectionStrings__PetServiceDb=Server=sqlserver;Database=PetApp.PetService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - ConnectionStrings__PetServiceDb=Host=postgres;Database=PetApp.PetService;Username=postgres;Password=PetApp123!@#;
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
     ports:
-      - "44305:443"  # Changed from 5000 to avoid conflicts
-      - "5000:80"
+      - "44305:443"
+      - "5005:80"
     depends_on:
-      sqlserver:
+      postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -123,7 +122,7 @@ services:
     networks:
       - pet-app-network
     volumes:
-      - ~/.aspnet/https:/https:ro  # Added missing volume mount
+      - ~/.aspnet/https:/https:ro
 
   # File Service
   file-service:
@@ -135,7 +134,7 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
-      - ConnectionStrings__FileServiceDb=Server=sqlserver;Database=PetApp.FileService;User Id=sa;Password=PetApp123!@#;Encrypt=False;TrustServerCertificate=True;
+      - ConnectionStrings__FileServiceDb=Host=postgres;Database=PetApp.FileService;Username=postgres;Password=PetApp123!@#;
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
@@ -143,7 +142,7 @@ services:
       - "44303:443"
       - "5003:80"
     depends_on:
-      sqlserver:
+      postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -196,10 +195,10 @@ services:
     networks:
       - pet-app-network
     volumes:
-      - ~/.aspnet/https:/https:ro  # Added missing volume mount
+      - ~/.aspnet/https:/https:ro
 
 volumes:
-  sqlserver_data:
+  postgres_data:
   rabbitmq_data:
 
 networks:
