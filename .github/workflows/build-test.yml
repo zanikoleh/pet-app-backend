@@ -40,10 +40,35 @@ jobs:
       run: dotnet build --no-restore --configuration Release
     
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal --configuration Release
+      run: |
+        dotnet test \
+          --no-build \
+          --configuration Release \
+          --verbosity normal \
+          --logger "console;verbosity=normal" \
+          --collect:"XPlat Code Coverage" \
+          --settings "$(pwd)/tests/runsettings.xml" 2>&1 | tee test-results.log
       env:
-        ConnectionString: "Host=localhost;Database=petapp;Username=postgres;Password=P@ssw0rd2024;Port=5432;"
+        ASPNETCORE_ENVIRONMENT: Testing
+        ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=petapp;Username=postgres;Password=P@ssw0rd2024;"
+        POSTGRES_HOST: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: P@ssw0rd2024
+        POSTGRES_DB: petapp
+      timeout-minutes: 30
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       if: always()
+      with:
+        files: ./coverage/coverage.opencover.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+    
+    - name: Publish test results
+      if: always()
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+        files: '**/TestResults/**/*.trx'
+        check_name: Unit Test Results

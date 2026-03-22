@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Code coverage configuration -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>opencover</Format>
+          <Exclude>[*]*.Tests.*</Exclude>
+          <Exclude>[*]*.Tests</Exclude>
+          <Exclude>[xunit.*]*</Exclude>
+          <Exclude>[FluentAssertions.*]*</Exclude>
+          <Exclude>[Moq]*</Exclude>
+          <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
+          <ExcludeByAttribute>CompilerGeneratedAttribute</ExcludeByAttribute>
+          <Exclude>[*.Infrastructure.Tests]*</Exclude>
+          <Exclude>[*.Application.Tests]*</Exclude>
+          <Exclude>[*.Api.Tests]*</Exclude>
+          <Exclude>[*.Domain.Tests]*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+
+  <!-- Test runtime settings -->
+  <RunConfiguration>
+    <TestSessionTimeout>600000</TestSessionTimeout>
+    <MaxCpuCount>0</MaxCpuCount>
+  </RunConfiguration>
+
+  <!-- Logging -->
+  <LoggerRunSettings>
+    <Verbosity>normal</Verbosity>
+  </LoggerRunSettings>
+</RunSettings>
