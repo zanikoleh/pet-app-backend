@@ -1,8 +1,11 @@
 # Use the official Microsoft .NET image as the base image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgssapi-krb5-2 \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 80 443
 
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
