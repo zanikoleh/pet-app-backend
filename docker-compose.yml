@@ -62,6 +62,8 @@ services:
         condition: service_healthy
     networks:
       - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
   # User Profile Service
   user-profile-service:
@@ -88,6 +90,8 @@ services:
         condition: service_started
     networks:
       - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
   # Pet Service
   pet-service:
@@ -114,6 +118,8 @@ services:
         condition: service_started
     networks:
       - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
   # File Service
   file-service:
@@ -140,6 +146,8 @@ services:
         condition: service_started
     networks:
       - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
   # Notification Service
   notification-service:
@@ -158,6 +166,8 @@ services:
         condition: service_healthy
     networks:
       - pet-app-network
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
   # API Gateway
   api-gateway:

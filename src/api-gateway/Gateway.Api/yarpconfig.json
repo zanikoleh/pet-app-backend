@@ -61,7 +61,7 @@
       "identity-cluster": {
         "Destinations": {
           "identity-1": {
-            "Address": "https://identity-service:443"
+            "Address": "http://identity-service:80"
           }
         },
         "HttpRequest": {
@@ -71,7 +71,7 @@
       "profiles-cluster": {
         "Destinations": {
           "profiles-1": {
-            "Address": "https://user-profile-service:443"
+            "Address": "http://user-profile-service:80"
           }
         },
         "HttpRequest": {
@@ -81,7 +81,7 @@
       "files-cluster": {
         "Destinations": {
           "files-1": {
-            "Address": "https://file-service:443"
+            "Address": "http://file-service:80"
           }
         },
         "HttpRequest": {
@@ -91,7 +91,7 @@
       "pets-cluster": {
         "Destinations": {
           "pets-1": {
-            "Address": "https://pet-service:443"
+            "Address": "http://pet-service:80"
           }
         },
         "HttpRequest": {
@@ -101,7 +101,7 @@
       "notifications-cluster": {
         "Destinations": {
           "notifications-1": {
-            "Address": "https://notification-service:443"
+            "Address": "http://notification-service:80"
           }
         },
         "HttpRequest": {
