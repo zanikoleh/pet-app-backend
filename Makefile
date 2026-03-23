@@ -1,7 +1,7 @@
 # Makefile for Pet App Backend
 # Common development commands
 
-.PHONY: help build run test test-verbose test-coverage test-gateway test-identity test-pet clean restore db-migrate docker-up docker-down logs setup init full-restart
+.PHONY: help build run test test-verbose test-coverage test-gateway test-identity test-pet clean restore db-migrate db-migrations-add db-migrations-apply docker-up docker-down logs setup init full-restart
 
 help:
 	@echo "Pet App Backend - Build Commands"
@@ -22,6 +22,8 @@ help:
 	@echo "  docker-up          - Start Docker containers"
 	@echo "  docker-down        - Stop Docker containers"
 	@echo "  db-migrate         - Run database migrations"
+	@echo "  db-migrations-add  - Create new migrations for all services with pending changes"
+	@echo "  db-migrations-apply - Apply all pending migrations to the database"
 	@echo "  logs               - View Docker logs"
 	@echo "  setup              - Setup development environment"
 	@echo "  init               - Initialize development environment"
@@ -107,6 +109,27 @@ db-migrate:
 	dotnet ef database update --project src/services/user-service/src/UserProfileService.Infrastructure --startup-project src/services/user-service/src/UserProfileService.Api
 	dotnet ef database update --project src/services/file-service/src/FileService.Infrastructure --startup-project src/services/file-service/src/FileService.Api
 	dotnet ef database update --project src/services/pet-service/src/PetService.Infrastructure --startup-project src/services/pet-service/src/PetService.Api
+
+db-migrations-add:
+	@echo "Creating new migrations for all services with pending changes..."
+	@echo ""
+	@echo "=== Identity Service ==="
+	-dotnet ef migrations add "PendingChanges" --project src/services/identity-service/src/IdentityService.Infrastructure --startup-project src/services/identity-service/src/IdentityService.Api 2>&1 | grep -E "Done|no changes|pending" || true
+	@echo ""
+	@echo "=== User Profile Service ==="
+	-dotnet ef migrations add "PendingChanges" --project src/services/user-service/src/UserProfileService.Infrastructure --startup-project src/services/user-service/src/UserProfileService.Api 2>&1 | grep -E "Done|no changes|pending" || true
+	@echo ""
+	@echo "=== File Service ==="
+	-dotnet ef migrations add "PendingChanges" --project src/services/file-service/src/FileService.Infrastructure --startup-project src/services/file-service/src/FileService.Api 2>&1 | grep -E "Done|no changes|pending" || true
+	@echo ""
+	@echo "=== Pet Service ==="
+	-dotnet ef migrations add "PendingChanges" --project src/services/pet-service/src/PetService.Infrastructure --startup-project src/services/pet-service/src/PetService.Api 2>&1 | grep -E "Done|no changes|pending" || true
+	@echo ""
+	@echo "✓ Migration creation complete!"
+
+db-migrations-apply:
+	@echo "Applying all pending migrations to the database..."
+	$(MAKE) db-migrate
 
 logs:
 	@echo "Showing Docker logs..."

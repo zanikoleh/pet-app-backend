@@ -54,7 +54,6 @@ services:
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
     ports:
-      - "44301:443"
       - "5001:80"
     depends_on:
       postgres:
@@ -63,8 +62,6 @@ services:
         condition: service_healthy
     networks:
       - pet-app-network
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   # User Profile Service
   user-profile-service:
@@ -81,7 +78,6 @@ services:
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
     ports:
-      - "44302:443"
       - "5002:80"
     depends_on:
       postgres:
@@ -92,8 +88,6 @@ services:
         condition: service_started
     networks:
       - pet-app-network
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   # Pet Service
   pet-service:
@@ -110,7 +104,6 @@ services:
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
     ports:
-      - "44305:443"
       - "5005:80"
     depends_on:
       postgres:
@@ -121,8 +114,6 @@ services:
         condition: service_started
     networks:
       - pet-app-network
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   # File Service
   file-service:
@@ -139,7 +130,6 @@ services:
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
     ports:
-      - "44303:443"
       - "5003:80"
     depends_on:
       postgres:
@@ -150,8 +140,6 @@ services:
         condition: service_started
     networks:
       - pet-app-network
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   # Notification Service
   notification-service:
@@ -164,15 +152,12 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
     ports:
-      - "44304:443"
       - "5004:80"
     depends_on:
       rabbitmq:
         condition: service_healthy
     networks:
       - pet-app-network
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   # API Gateway
   api-gateway:

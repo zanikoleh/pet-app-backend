@@ -26,6 +26,20 @@ builder.Configuration
     .AddJsonFile("yarpconfig.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+// In Docker environment, configure HTTP clients to skip certificate validation for service-to-service HTTPS communication
+if (builder.Environment.IsEnvironment("Docker"))
+{
+    // Create a handler that accepts self-signed certificates
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+    
+    builder.Services
+        .AddHttpClient("YARP")
+        .ConfigurePrimaryHttpMessageHandler(() => handler);
+}
+
 // Add YARP reverse proxy
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
