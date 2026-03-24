@@ -480,3 +480,21 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# ============================================
+# Terraform / Infrastructure as Code
+# ============================================
+infrastructure/**/*.tfvars
+infrastructure/**/*.tfvars.json
+infrastructure/**/*.tfstate
+infrastructure/**/*.tfstate.*
+infrastructure/**/.terraform/
+infrastructure/**/.terraform.lock.hcl
+infrastructure/**/.terraformrc
+infrastructure/**/terraform.rc
+infrastructure/**/crash.log
+infrastructure/**/crash.*.log
+infrastructure/**/override.tf
+infrastructure/**/override.tf.json
+infrastructure/**/*_override.tf
+infrastructure/**/*_override.tf.json

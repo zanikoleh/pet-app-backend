@@ -1,0 +1,32 @@
+# ============================================
+# Terraform Variables for PetApp Backend
+# ============================================
+# IMPORTANT: Make a copy as terraform.tfvars
+# DO NOT commit terraform.tfvars to git!
+# ============================================
+
+# Azure Configuration
+location            = "Poland Central"
+resource_group_name = "petapp_rsrc_grp"
+environment         = "dev" # Use: dev, staging, prod
+
+# Azure Container Registry (ACR) Configuration
+acr_name = "oznkpetpp"
+acr_sku  = "Basic" # Options: Basic, Standard, Premium
+
+# Terraform State Storage (optional - use for production)
+create_terraform_state_storage = false
+storage_account_name           = "petstatestore" # Only used if create_terraform_state_storage = true
+
+# Azure Container Instances (optional - for testing single service)
+create_aci_demo = false           # Set to true to deploy demo service
+service_name    = "pet-service"   # Which service to deploy
+image_version   = "0.1.0"         # Docker image tag
+
+# PostgreSQL Database (optional)
+create_database     = false           # Set to true to create database
+database_name       = "petapp-db"
+db_admin_username   = "psqladmin"
+db_admin_password   = "SecurePassword123!" # ⚠️ Change this for production!
+db_sku_name         = "B_Gen5_1"          # B_Gen5_1 for dev, GP_Gen5_2+ for prod
+db_storage_mb       = 51200              # 50GB minimum
