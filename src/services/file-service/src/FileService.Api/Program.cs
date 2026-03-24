@@ -8,11 +8,15 @@ using Microsoft.OpenApi;
 using FileService.Application;
 using FileService.Infrastructure;
 using SharedKernel.Infrastructure;
+using Observability;
 using System.Text;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add observability
+builder.AddObservability("file-service");
 
 // Add services
 builder.Services.AddControllers();
@@ -104,6 +108,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline
+app.UseTraceContextPropagation();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {

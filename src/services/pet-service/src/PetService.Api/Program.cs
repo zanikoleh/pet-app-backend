@@ -1,8 +1,12 @@
 using PetService.Application;
 using PetService.Infrastructure;
 using SharedKernel.Infrastructure.EventBus;
+using Observability;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add observability
+builder.AddObservability("pet-service");
 
 // Add services
 builder.Services.AddControllers();
@@ -42,6 +46,8 @@ builder.Logging.AddConsole();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseTraceContextPropagation();
+
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
     app.UseSwagger();

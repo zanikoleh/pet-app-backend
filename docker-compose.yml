@@ -39,6 +39,25 @@ services:
       timeout: 5s
       retries: 5
 
+  # Jaeger Tracing Backend
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14250:14250"  # OTLP gRPC receiver
+      - "14268:14268"  # OTLP HTTP receiver
+      - "9411:9411"    # Zipkin compatible endpoint
+    networks:
+      - pet-app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:16686/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Identity Service
   identity-service:
     build:
@@ -53,12 +72,16 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Observability__OtlpEndpoint=http://jaeger:4317
+      - Observability__EnableConsoleExporter=false
     ports:
       - "5001:80"
     depends_on:
       postgres:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      jaeger:
         condition: service_healthy
     networks:
       - pet-app-network
@@ -79,6 +102,8 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Observability__OtlpEndpoint=http://jaeger:4317
+      - Observability__EnableConsoleExporter=false
     ports:
       - "5002:80"
     depends_on:
@@ -88,6 +113,8 @@ services:
         condition: service_healthy
       identity-service:
         condition: service_started
+      jaeger:
+        condition: service_healthy
     networks:
       - pet-app-network
     volumes:
@@ -107,6 +134,8 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Observability__OtlpEndpoint=http://jaeger:4317
+      - Observability__EnableConsoleExporter=false
     ports:
       - "5005:80"
     depends_on:
@@ -116,6 +145,8 @@ services:
         condition: service_healthy
       identity-service:
         condition: service_started
+      jaeger:
+        condition: service_healthy
     networks:
       - pet-app-network
     volumes:
@@ -135,6 +166,8 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Observability__OtlpEndpoint=http://jaeger:4317
+      - Observability__EnableConsoleExporter=false
     ports:
       - "5003:80"
     depends_on:
@@ -144,6 +177,8 @@ services:
         condition: service_healthy
       identity-service:
         condition: service_started
+      jaeger:
+        condition: service_healthy
     networks:
       - pet-app-network
     volumes:
@@ -159,10 +194,14 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - Observability__OtlpEndpoint=http://jaeger:4317
+      - Observability__EnableConsoleExporter=false
     ports:
       - "5004:80"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      jaeger:
         condition: service_healthy
     networks:
       - pet-app-network
@@ -177,6 +216,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:8080
+      - Observability__OtlpEndpoint=http://jaeger:4317
+      - Observability__EnableConsoleExporter=false
     ports:
       - "44300:8080"
     depends_on:
@@ -185,6 +226,7 @@ services:
       - pet-service
       - file-service
       - notification-service
+      - jaeger
     networks:
       - pet-app-network
 

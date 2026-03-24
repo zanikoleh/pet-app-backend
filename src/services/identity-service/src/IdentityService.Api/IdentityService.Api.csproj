@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="../IdentityService.Application/IdentityService.Application.csproj" />
     <ProjectReference Include="../IdentityService.Infrastructure/IdentityService.Infrastructure.csproj" />
+    <ProjectReference Include="../../../../building-blocks/observability/Observability.csproj" />
   </ItemGroup>
 
   <ItemGroup>

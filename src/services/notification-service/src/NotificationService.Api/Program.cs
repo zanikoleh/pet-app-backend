@@ -3,8 +3,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 using NotificationService.Infrastructure;
+using Observability;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add observability
+builder.AddObservability("notification-service");
 
 // Add services
 builder.Services.AddControllers();
@@ -27,6 +31,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline
+app.UseTraceContextPropagation();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {

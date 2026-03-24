@@ -8,6 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
+# Copy building blocks
+COPY ["src/building-blocks/", "src/building-blocks/"]
+
 # Copy project files
 COPY ["src/api-gateway/Gateway.Api/Gateway.Api.csproj", "src/api-gateway/Gateway.Api/"]
 COPY ["src/api-gateway/Gateway.Api/Program.cs", "src/api-gateway/Gateway.Api/"]

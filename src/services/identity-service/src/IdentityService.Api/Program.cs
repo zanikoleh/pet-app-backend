@@ -9,10 +9,14 @@ using Microsoft.OpenApi;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using SharedKernel.Infrastructure;
+using Observability;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add observability
+builder.AddObservability("identity-service");
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -110,6 +114,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseTraceContextPropagation();
+
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
     app.UseSwagger();

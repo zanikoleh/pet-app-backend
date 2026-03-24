@@ -1,6 +1,10 @@
 using Yarp.ReverseProxy.Configuration;
+using Observability;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add observability
+builder.AddObservability("api-gateway");
 
 // Add services for the API Gateway
 builder.Services.AddCors(options =>
@@ -39,6 +43,9 @@ builder.Services.AddLogging(logging =>
 });
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline
+app.UseTraceContextPropagation();
 
 // Use CORS
 app.UseCors("AllowAll");
