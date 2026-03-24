@@ -50,3 +50,5 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+namespace NotificationService.Api { public class NotificationApiMarker { } }

@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="../PetService.Application/PetService.Application.csproj" />
     <ProjectReference Include="../../../../building-blocks/infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../../../../building-blocks/event-bus/EventBus.csproj" />
   </ItemGroup>
 
   <ItemGroup>

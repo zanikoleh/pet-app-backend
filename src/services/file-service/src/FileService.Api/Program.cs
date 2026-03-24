@@ -136,3 +136,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+#pragma warning disable CS1591
+namespace FileService.Api { public class FileApiMarker { } }

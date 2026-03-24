@@ -64,3 +64,5 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+namespace PetService.Api { public class PetApiMarker { } }

@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PetService.Application\PetService.Application.csproj" />
-    <ProjectReference Include="..\PetService.Infrastructure\PetService.Infrastructure.csproj" />    <ProjectReference Include="../../../../building-blocks/observability/Observability.csproj" />  </ItemGroup>
+    <ProjectReference Include="..\PetService.Infrastructure\PetService.Infrastructure.csproj" />
+    <ProjectReference Include="../../../../building-blocks/observability/Observability.csproj" />
+  </ItemGroup>
 
 </Project>

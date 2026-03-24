@@ -13,12 +13,12 @@ namespace IntegrationTests.Services;
 
 public class IdentityServiceIntegrationTests : IAsyncLifetime
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly WebApplicationFactory<IdentityApiMarker> _factory;
     private HttpClient _client;
 
     public IdentityServiceIntegrationTests()
     {
-        _factory = new WebApplicationFactory<Program>();
+        _factory = new WebApplicationFactory<IdentityApiMarker>();
     }
 
     public async Task InitializeAsync()

@@ -10,6 +10,7 @@
     <ProjectReference Include="../UserProfileService.Domain/UserProfileService.Domain.csproj" />
     <ProjectReference Include="../UserProfileService.Application/UserProfileService.Application.csproj" />
     <ProjectReference Include="../../../../building-blocks/infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../../../../building-blocks/event-bus/EventBus.csproj" />
   </ItemGroup>
 
   <ItemGroup>

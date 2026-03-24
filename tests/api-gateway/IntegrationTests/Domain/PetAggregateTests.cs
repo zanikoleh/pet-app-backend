@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FluentAssertions;
-using PetService.Domain.Entities;
+using PetService.Domain.Aggregates;
 using PetService.Domain.ValueObjects;
 using PetService.Domain.Events;
+using SharedKernel;
 
 namespace IntegrationTests.Domain;
 
@@ -15,34 +16,32 @@ public class PetAggregateTests
     public void CreatePet_WithValidData_CreatesSuccessfully()
     {
         // Arrange
+        var ownerId = Guid.NewGuid();
         var name = "Fluffy";
-        var species = "Dog";
-        var breed = "Golden Retriever";
-        var dateOfBirth = DateTime.Now.AddYears(-5);
-        var userId = 1;
+        var type = PetType.Dog;
+        var breed = Breed.Create("Golden Retriever");
+        var dateOfBirth = DateTime.UtcNow.AddYears(-5);
 
         // Act
-        var pet = Pet.Create(name, species, breed, dateOfBirth, userId);
+        var pet = new Pet(ownerId, name, type, dateOfBirth, breed);
 
         // Assert
         pet.Should().NotBeNull();
         pet.Name.Should().Be(name);
-        pet.Species.Should().Be(species);
-        pet.Breed.Should().Be(breed);
+        pet.Type.Should().Be(type);
+        pet.Breed!.Value.Should().Be("Golden Retriever");
         pet.DateOfBirth.Should().Be(dateOfBirth);
-        pet.UserIdOwner.Should().Be(userId);
+        pet.OwnerId.Should().Be(ownerId);
     }
 
     [Fact]
     public void CreatePet_PublishesPetCreatedEvent()
     {
         // Arrange
-        var name = "Fluffy";
-        var species = "Dog";
-        var userId = 1;
+        var ownerId = Guid.NewGuid();
 
         // Act
-        var pet = Pet.Create(name, species, "Breed", DateTime.Now.AddYears(-5), userId);
+        var pet = new Pet(ownerId, "Fluffy", PetType.Dog, DateTime.UtcNow.AddYears(-5));
 
         // Assert
         pet.DomainEvents.Should().HaveCount(1);
@@ -53,49 +52,41 @@ public class PetAggregateTests
     public void UpdatePet_WithValidData_UpdatesSuccessfully()
     {
         // Arrange
-        var pet = Pet.Create("Fluffy", "Dog", "Golden Retriever", DateTime.Now.AddYears(-5), 1);
+        var pet = new Pet(Guid.NewGuid(), "Fluffy", PetType.Dog, DateTime.UtcNow.AddYears(-5), Breed.Create("Golden Retriever"));
         var newName = "Lucky";
 
         // Act
-        pet.Update(newName, "Dog", "Labrador");
+        pet.UpdateInfo(newName, Breed.Create("Labrador"), null);
 
         // Assert
         pet.Name.Should().Be(newName);
-        pet.Breed.Should().Be("Labrador");
-    }
-
-    [Fact]
-    public void DeletePet_WithValidId_DeletesSuccessfully()
-    {
-        // Arrange
-        var pet = Pet.Create("Fluffy", "Dog", "Golden Retriever", DateTime.Now.AddYears(-5), 1);
-
-        // Act
-        pet.Delete();
-
-        // Assert
-        pet.IsDeleted.Should().BeTrue();
-        pet.DeletedAt.Should().NotBeNull();
+        pet.Breed!.Value.Should().Be("Labrador");
     }
 
     [Fact]
     public void UpdatePet_WithEmptyName_ThrowsException()
     {
         // Arrange
-        var pet = Pet.Create("Fluffy", "Dog", "Golden Retriever", DateTime.Now.AddYears(-5), 1);
+        var pet = new Pet(Guid.NewGuid(), "Fluffy", PetType.Dog, DateTime.UtcNow.AddYears(-5));
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() =>
-            pet.Update("", "Dog", "Breed"));
-
-        ex.Message.Should().Contain("Name cannot be empty");
+        var act = () => pet.UpdateInfo("", null, null);
+        act.Should().Throw<DomainException>().Which.Message.Should().Contain("name");
     }
 
     [Fact]
-    public void Pet_WithZeroUserId_ThrowsException()
+    public void CreatePet_WithEmptyName_ThrowsException()
     {
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() =>
-            Pet.Create("Fluffy", "Dog", "Breed", DateTime.Now, 0));
+        var act = () => new Pet(Guid.NewGuid(), "", PetType.Dog, DateTime.UtcNow.AddYears(-5));
+        act.Should().Throw<DomainException>().Which.Message.Should().Contain("name");
+    }
+
+    [Fact]
+    public void CreatePet_WithFutureDateOfBirth_ThrowsException()
+    {
+        // Act & Assert
+        var act = () => new Pet(Guid.NewGuid(), "Fluffy", PetType.Dog, DateTime.UtcNow.AddYears(1));
+        act.Should().Throw<DomainException>().Which.Message.Should().Contain("future");
     }
 }

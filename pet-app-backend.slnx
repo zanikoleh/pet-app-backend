@@ -1,0 +1,96 @@
+<Solution>
+  <!-- Building Blocks -->
+  <Folder Name="/building-blocks/">
+    <Project Path="src/building-blocks/shared-kernel/SharedKernel.csproj" />
+    <Project Path="src/building-blocks/contracts/Contracts.csproj" />
+    <Project Path="src/building-blocks/event-bus/EventBus.csproj" />
+    <Project Path="src/building-blocks/infrastructure/Infrastructure.csproj" />
+    <Project Path="src/building-blocks/observability/Observability.csproj" />
+  </Folder>
+
+  <!-- API Gateway -->
+  <Folder Name="/api-gateway/">
+    <Project Path="src/api-gateway/Gateway.Api/Gateway.Api.csproj" />
+  </Folder>
+
+  <!-- Identity Service -->
+  <Folder Name="/services/identity-service/">
+    <Project Path="src/services/identity-service/src/IdentityService.Api/IdentityService.Api.csproj" />
+    <Project Path="src/services/identity-service/src/IdentityService.Application/IdentityService.Application.csproj" />
+    <Project Path="src/services/identity-service/src/IdentityService.Domain/IdentityService.Domain.csproj" />
+    <Project Path="src/services/identity-service/src/IdentityService.Infrastructure/IdentityService.Infrastructure.csproj" />
+  </Folder>
+
+  <!-- User Profile Service -->
+  <Folder Name="/services/user-profile-service/">
+    <Project Path="src/services/user-service/src/UserProfileService.Api/UserProfileService.Api.csproj" />
+    <Project Path="src/services/user-service/src/UserProfileService.Application/UserProfileService.Application.csproj" />
+    <Project Path="src/services/user-service/src/UserProfileService.Domain/UserProfileService.Domain.csproj" />
+    <Project Path="src/services/user-service/src/UserProfileService.Infrastructure/UserProfileService.Infrastructure.csproj" />
+  </Folder>
+
+  <!-- File Service -->
+  <Folder Name="/services/file-service/">
+    <Project Path="src/services/file-service/src/FileService.Api/FileService.Api.csproj" />
+    <Project Path="src/services/file-service/src/FileService.Application/FileService.Application.csproj" />
+    <Project Path="src/services/file-service/src/FileService.Domain/FileService.Domain.csproj" />
+    <Project Path="src/services/file-service/src/FileService.Infrastructure/FileService.Infrastructure.csproj" />
+  </Folder>
+
+  <!-- Pet Service -->
+  <Folder Name="/services/pet-service/">
+    <Project Path="src/services/pet-service/src/PetService.Api/PetService.Api.csproj" />
+    <Project Path="src/services/pet-service/src/PetService.Application/PetService.Application.csproj" />
+    <Project Path="src/services/pet-service/src/PetService.Domain/PetService.Domain.csproj" />
+    <Project Path="src/services/pet-service/src/PetService.Infrastructure/PetService.Infrastructure.csproj" />
+  </Folder>
+
+  <!-- Notification Service -->
+  <Folder Name="/services/notification-service/">
+    <Project Path="src/services/notification-service/src/NotificationService.Api/NotificationService.Api.csproj" />
+    <Project Path="src/services/notification-service/src/NotificationService.Application/NotificationService.Application.csproj" />
+    <Project Path="src/services/notification-service/src/NotificationService.Domain/NotificationService.Domain.csproj" />
+    <Project Path="src/services/notification-service/src/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
+  </Folder>
+
+  <!-- Tests -->
+  <Folder Name="/tests/api-gateway/">
+    <Project Path="tests/api-gateway/Gateway.Api.Tests/Gateway.Api.Tests.csproj" />
+    <Project Path="tests/api-gateway/IntegrationTests/IntegrationTests.csproj" />
+  </Folder>
+
+  <Folder Name="/tests/identity-service/">
+    <Project Path="tests/identity-service/src/IdentityService.Api.Tests/IdentityService.Api.Tests.csproj" />
+    <Project Path="tests/identity-service/src/IdentityService.Application.Tests/IdentityService.Application.Tests.csproj" />
+    <Project Path="tests/identity-service/src/IdentityService.Domain.Tests/IdentityService.Domain.Tests.csproj" />
+    <Project Path="tests/identity-service/src/IdentityService.Infrastructure.Tests/IdentityService.Infrastructure.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/tests/user-service/">
+    <Project Path="tests/user-service/src/UserService.Api.Tests/UserService.Api.Tests.csproj" />
+    <Project Path="tests/user-service/src/UserService.Application.Tests/UserService.Application.Tests.csproj" />
+    <Project Path="tests/user-service/src/UserService.Domain.Tests/UserService.Domain.Tests.csproj" />
+    <Project Path="tests/user-service/src/UserService.Infrastructure.Tests/UserService.Infrastructure.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/tests/file-service/">
+    <Project Path="tests/file-service/src/FileService.Api.Tests/FileService.Api.Tests.csproj" />
+    <Project Path="tests/file-service/src/FileService.Application.Tests/FileService.Application.Tests.csproj" />
+    <Project Path="tests/file-service/src/FileService.Domain.Tests/FileService.Domain.Tests.csproj" />
+    <Project Path="tests/file-service/src/FileService.Infrastructure.Tests/FileService.Infrastructure.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/tests/pet-service/">
+    <Project Path="tests/pet-service/src/PetService.Api.Tests/PetService.Api.Tests.csproj" />
+    <Project Path="tests/pet-service/src/PetService.Application.Tests/PetService.Application.Tests.csproj" />
+    <Project Path="tests/pet-service/src/PetService.Domain.Tests/PetService.Domain.Tests.csproj" />
+    <Project Path="tests/pet-service/src/PetService.Infrastructure.Tests/PetService.Infrastructure.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/tests/notification-service/">
+    <Project Path="tests/notification-service/src/NotificationService.Api.Tests/NotificationService.Api.Tests.csproj" />
+    <Project Path="tests/notification-service/src/NotificationService.Application.Tests/NotificationService.Application.Tests.csproj" />
+    <Project Path="tests/notification-service/src/NotificationService.Domain.Tests/NotificationService.Domain.Tests.csproj" />
+    <Project Path="tests/notification-service/src/NotificationService.Infrastructure.Tests/NotificationService.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

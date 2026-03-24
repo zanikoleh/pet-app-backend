@@ -14,13 +14,13 @@ namespace IntegrationTests.Services;
 
 public class PetServiceIntegrationTests : IAsyncLifetime
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly WebApplicationFactory<PetApiMarker> _factory;
     private HttpClient _client;
     private string _accessToken;
 
     public PetServiceIntegrationTests()
     {
-        _factory = new WebApplicationFactory<Program>();
+        _factory = new WebApplicationFactory<PetApiMarker>();
     }
 
     public async Task InitializeAsync()
