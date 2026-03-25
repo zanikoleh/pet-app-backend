@@ -8,6 +8,7 @@ using Microsoft.OpenApi;
 using FileService.Application;
 using FileService.Infrastructure;
 using InfrastructureWeb.Middleware;
+using InfrastructureWeb;
 using SharedKernel.Infrastructure;
 using Observability;
 using System.Text;
@@ -18,6 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add observability
 builder.AddObservability("file-service");
+
+// Add structured logging
+builder.AddStructuredLogging("file-service");
 
 // Add services
 builder.Services.AddControllers();
@@ -111,6 +115,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseCorrelationIdMiddleware();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 

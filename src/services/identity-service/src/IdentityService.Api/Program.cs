@@ -9,6 +9,7 @@ using Microsoft.OpenApi;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using InfrastructureWeb.Middleware;
+using InfrastructureWeb;
 using SharedKernel.Infrastructure;
 using Observability;
 using System.Text;
@@ -18,6 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add observability
 builder.AddObservability("identity-service");
+
+// Add structured logging
+builder.AddStructuredLogging("identity-service");
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -115,6 +119,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseCorrelationIdMiddleware();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 

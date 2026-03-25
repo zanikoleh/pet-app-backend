@@ -81,6 +81,8 @@ services:
         condition: service_healthy
       jaeger:
         condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     networks:
       - pet-app-network
     volumes:
@@ -100,6 +102,7 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -112,6 +115,8 @@ services:
       identity-service:
         condition: service_started
       jaeger:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - pet-app-network
@@ -132,6 +137,7 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -144,6 +150,8 @@ services:
       identity-service:
         condition: service_started
       jaeger:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - pet-app-network
@@ -164,6 +172,7 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
+      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -176,6 +185,8 @@ services:
       identity-service:
         condition: service_started
       jaeger:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - pet-app-network
@@ -192,6 +203,7 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -200,6 +212,8 @@ services:
       rabbitmq:
         condition: service_healthy
       jaeger:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - pet-app-network
@@ -228,9 +242,48 @@ services:
     networks:
       - pet-app-network
 
+  # Elasticsearch (for centralized logging)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - pet-app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q green"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Kibana (for log visualization)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - pet-app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:5601/api/status | grep -q 'state\":\"green\"' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
   rabbitmq_data:
+  elasticsearch_data:
 
 networks:
   pet-app-network:

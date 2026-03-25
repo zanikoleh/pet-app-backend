@@ -10,6 +10,7 @@
     <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.5" />
     <ProjectReference Include="../../building-blocks/observability/Observability.csproj" />
+    <ProjectReference Include="../../building-blocks/infrastructure-web/InfrastructureWeb.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,12 +4,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 using NotificationService.Infrastructure;
 using InfrastructureWeb.Middleware;
+using InfrastructureWeb;
 using Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add observability
 builder.AddObservability("notification-service");
+
+// Add structured logging
+builder.AddStructuredLogging("notification-service");
 
 // Add services
 builder.Services.AddControllers();
@@ -34,6 +38,7 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseCorrelationIdMiddleware();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 

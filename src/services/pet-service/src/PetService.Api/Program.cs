@@ -1,6 +1,7 @@
 using PetService.Application;
 using PetService.Infrastructure;
 using InfrastructureWeb.Middleware;
+using InfrastructureWeb;
 using SharedKernel.Infrastructure.EventBus;
 using Observability;
 
@@ -8,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add observability
 builder.AddObservability("pet-service");
+
+// Add structured logging
+builder.AddStructuredLogging("pet-service");
 
 // Add services
 builder.Services.AddControllers();
@@ -41,12 +45,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Add logging
-builder.Logging.AddConsole();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseCorrelationIdMiddleware();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 

@@ -9,6 +9,7 @@ using Microsoft.OpenApi;
 using UserProfileService.Application;
 using UserProfileService.Infrastructure;
 using InfrastructureWeb.Middleware;
+using InfrastructureWeb;
 using SharedKernel.Infrastructure;
 using Observability;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add observability
 builder.AddObservability("user-service");
+
+// Add structured logging
+builder.AddStructuredLogging("user-service");
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -112,6 +116,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseCorrelationIdMiddleware();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 
