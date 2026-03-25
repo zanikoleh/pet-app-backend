@@ -14,7 +14,7 @@ namespace IntegrationTests.Services;
 public class IdentityServiceIntegrationTests : IAsyncLifetime
 {
     private readonly IdentityServiceWebApplicationFactory _factory;
-    private HttpClient _client;
+    private HttpClient? _client;
 
     public IdentityServiceIntegrationTests()
     {
@@ -50,7 +50,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             "application/json");
 
         // Act
-        var response = await _client.PostAsync("/api/auth/register", content);
+        var response = await _client!.PostAsync("/api/auth/register", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -78,7 +78,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             "application/json");
 
         // Act
-        var response = await _client.PostAsync("/api/auth/register", content);
+        var response = await _client!.PostAsync("/api/auth/register", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -101,7 +101,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             "application/json");
 
         // Act
-        var response = await _client.PostAsync("/api/auth/register", content);
+        var response = await _client!.PostAsync("/api/auth/register", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -123,7 +123,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             Encoding.UTF8,
             "application/json");
 
-        await _client.PostAsync("/api/auth/register", registerContent);
+        await _client!.PostAsync("/api/auth/register", registerContent);
 
         // Act - Login
         var loginRequest = new
@@ -162,7 +162,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             "application/json");
 
         // Act
-        var response = await _client.PostAsync("/api/auth/login", content);
+        var response = await _client!.PostAsync("/api/auth/login", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -184,7 +184,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             Encoding.UTF8,
             "application/json");
 
-        await _client.PostAsync("/api/auth/register", registerContent);
+        await _client!.PostAsync("/api/auth/register", registerContent);
 
         // Act
         var checkEmailRequest = new { email = "check-email@example.com" };
@@ -209,7 +209,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
             JsonSerializer.Serialize(checkEmailRequest),
             Encoding.UTF8,
             "application/json");
-        var response = await _client.PostAsync("/api/auth/check-email", checkContent);
+        var response = await _client!.PostAsync("/api/auth/check-email", checkContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

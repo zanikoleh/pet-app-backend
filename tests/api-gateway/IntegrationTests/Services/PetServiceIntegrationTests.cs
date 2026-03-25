@@ -15,8 +15,8 @@ namespace IntegrationTests.Services;
 public class PetServiceIntegrationTests : IAsyncLifetime
 {
     private readonly PetServiceWebApplicationFactory _factory;
-    private HttpClient _client;
-    private string _accessToken;
+    private HttpClient? _client;
+    private string? _accessToken;
 
     public PetServiceIntegrationTests()
     {
@@ -58,7 +58,7 @@ public class PetServiceIntegrationTests : IAsyncLifetime
             "application/json");
 
         // Act
-        var response = await _client.PostAsync($"/api/pets?ownerId={ownerId}", content);
+        var response = await _client!.PostAsync($"/api/pets?ownerId={ownerId}", content);
 
         // Assert - Verify endpoint is reachable and returns a response
         response.Should().NotBeNull();
@@ -74,7 +74,7 @@ public class PetServiceIntegrationTests : IAsyncLifetime
         var ownerId = Guid.NewGuid();
 
         // Act
-        var response = await _client.GetAsync($"/api/pets/{petId}?ownerId={ownerId}");
+        var response = await _client!.GetAsync($"/api/pets/{petId}?ownerId={ownerId}");
 
         // Assert - Verify endpoint is reachable
         response.Should().NotBeNull();
@@ -88,7 +88,7 @@ public class PetServiceIntegrationTests : IAsyncLifetime
         var ownerId = Guid.NewGuid();
 
         // Act
-        var response = await _client.GetAsync($"/api/pets?ownerId={ownerId}");
+        var response = await _client!.GetAsync($"/api/pets?ownerId={ownerId}");
 
         // Assert - Verify endpoint is reachable
         response.Should().NotBeNull();
@@ -114,7 +114,7 @@ public class PetServiceIntegrationTests : IAsyncLifetime
             "application/json");
 
         // Act
-        var response = await _client.PutAsync($"/api/pets/{petId}?ownerId={ownerId}", content);
+        var response = await _client!.PutAsync($"/api/pets/{petId}?ownerId={ownerId}", content);
 
         // Assert
         response.StatusCode.Should().BeOneOf(
@@ -130,7 +130,7 @@ public class PetServiceIntegrationTests : IAsyncLifetime
         var ownerId = Guid.NewGuid();
 
         // Act
-        var response = await _client.DeleteAsync($"/api/pets/{petId}?ownerId={ownerId}");
+        var response = await _client!.DeleteAsync($"/api/pets/{petId}?ownerId={ownerId}");
 
         // Assert
         response.StatusCode.Should().BeOneOf(
