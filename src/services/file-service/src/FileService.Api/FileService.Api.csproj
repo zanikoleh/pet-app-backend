@@ -11,6 +11,7 @@
     <ProjectReference Include="../FileService.Application/FileService.Application.csproj" />
     <ProjectReference Include="../FileService.Infrastructure/FileService.Infrastructure.csproj" />
     <ProjectReference Include="../../../../building-blocks/observability/Observability.csproj" />
+    <ProjectReference Include="../../../../building-blocks/infrastructure-web/InfrastructureWeb.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,19 +6,19 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using IdentityService.Api;
+using IntegrationTests.Factories;
 
 namespace IntegrationTests.Services;
 
 public class IdentityServiceIntegrationTests : IAsyncLifetime
 {
-    private readonly WebApplicationFactory<IdentityApiMarker> _factory;
+    private readonly IdentityServiceWebApplicationFactory _factory;
     private HttpClient _client;
 
     public IdentityServiceIntegrationTests()
     {
-        _factory = new WebApplicationFactory<IdentityApiMarker>();
+        _factory = new IdentityServiceWebApplicationFactory();
     }
 
     public async Task InitializeAsync()
@@ -30,8 +30,7 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
     public async Task DisposeAsync()
     {
         _client?.Dispose();
-        _factory?.Dispose();
-        await Task.CompletedTask;
+        await _factory.DisposeAsync();
     }
 
     [Fact]
@@ -54,10 +53,12 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
         var response = await _client.PostAsync("/api/auth/register", content);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var responseContent = await response.Content.ReadAsStringAsync();
-        responseContent.Should().Contain("\"userId\"");
+        responseContent.Should().Contain("\"id\"");
         responseContent.Should().Contain("test@example.com");
+        responseContent.Should().Contain("accessToken");
+        responseContent.Should().Contain("refreshToken");
     }
 
     [Fact]
@@ -186,7 +187,12 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
         await _client.PostAsync("/api/auth/register", registerContent);
 
         // Act
-        var response = await _client.PostAsync("/api/auth/check-email?email=check-email@example.com", null);
+        var checkEmailRequest = new { email = "check-email@example.com" };
+        var checkContent = new StringContent(
+            JsonSerializer.Serialize(checkEmailRequest),
+            Encoding.UTF8,
+            "application/json");
+        var response = await _client.PostAsync("/api/auth/check-email", checkContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -198,7 +204,12 @@ public class IdentityServiceIntegrationTests : IAsyncLifetime
     public async Task CheckEmail_WithNonRegisteredEmail_ReturnsNotExists()
     {
         // Act
-        var response = await _client.PostAsync("/api/auth/check-email?email=notregistered@example.com", null);
+        var checkEmailRequest = new { email = "notregistered@example.com" };
+        var checkContent = new StringContent(
+            JsonSerializer.Serialize(checkEmailRequest),
+            Encoding.UTF8,
+            "application/json");
+        var response = await _client.PostAsync("/api/auth/check-email", checkContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

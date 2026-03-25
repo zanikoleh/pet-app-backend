@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using FileService.Application;
 using FileService.Infrastructure;
+using InfrastructureWeb.Middleware;
 using SharedKernel.Infrastructure;
 using Observability;
 using System.Text;
@@ -110,6 +111,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")

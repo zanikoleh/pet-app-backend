@@ -1,5 +1,6 @@
 using PetService.Application;
 using PetService.Infrastructure;
+using InfrastructureWeb.Middleware;
 using SharedKernel.Infrastructure.EventBus;
 using Observability;
 
@@ -46,6 +47,7 @@ builder.Logging.AddConsole();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")

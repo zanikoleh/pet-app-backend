@@ -11,6 +11,7 @@
     <ProjectReference Include="../UserProfileService.Application/UserProfileService.Application.csproj" />
     <ProjectReference Include="../UserProfileService.Infrastructure/UserProfileService.Infrastructure.csproj" />
     <ProjectReference Include="../../../../building-blocks/observability/Observability.csproj" />
+    <ProjectReference Include="../../../../building-blocks/infrastructure-web/InfrastructureWeb.csproj" />
   </ItemGroup>
 
   <ItemGroup>

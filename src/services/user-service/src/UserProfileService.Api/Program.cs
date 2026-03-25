@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -7,9 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using UserProfileService.Application;
 using UserProfileService.Infrastructure;
+using InfrastructureWeb.Middleware;
 using SharedKernel.Infrastructure;
 using Observability;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -111,6 +112,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
