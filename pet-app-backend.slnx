@@ -5,6 +5,7 @@
     <Project Path="src/building-blocks/contracts/Contracts.csproj" />
     <Project Path="src/building-blocks/event-bus/EventBus.csproj" />
     <Project Path="src/building-blocks/infrastructure/Infrastructure.csproj" />
+    <Project Path="src/building-blocks/infrastructure-web/InfrastructureWeb.csproj" />
     <Project Path="src/building-blocks/observability/Observability.csproj" />
   </Folder>
 

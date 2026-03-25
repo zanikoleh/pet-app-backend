@@ -61,6 +61,7 @@ services:
     build:
       context: .
       dockerfile: src/services/identity-service/src/IdentityService.Api/Dockerfile
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -93,6 +94,7 @@ services:
     build:
       context: .
       dockerfile: src/services/user-service/src/UserProfileService.Api/Dockerfile
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -102,7 +104,6 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
-      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -128,6 +129,7 @@ services:
     build:
       context: .
       dockerfile: src/services/pet-service/src/PetService.Api/Dockerfile
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -137,7 +139,6 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
-      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -163,6 +164,7 @@ services:
     build:
       context: .
       dockerfile: src/services/file-service/src/FileService.Api/Dockerfile
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -172,7 +174,6 @@ services:
       - JwtSettings__SecretKey=your-super-secret-key-that-is-at-least-32-characters-long-for-256bit
       - JwtSettings__Issuer=pet-app-identity-service
       - JwtSettings__Audience=pet-app-api
-      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -198,12 +199,12 @@ services:
     build:
       context: .
       dockerfile: src/services/notification-service/src/NotificationService.Api/Dockerfile
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
-      - Logging__Elasticsearch__Url=http://elasticsearch:9200
       - Observability__OtlpEndpoint=http://jaeger:4317
       - Observability__EnableConsoleExporter=false
     ports:
@@ -225,6 +226,7 @@ services:
     build:
       context: .
       dockerfile: src/api-gateway/Gateway.Api/Dockerfile
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:8080
@@ -257,7 +259,7 @@ services:
     networks:
       - pet-app-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q green"]
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE 'green|yellow'"]
       interval: 10s
       timeout: 5s
       retries: 5

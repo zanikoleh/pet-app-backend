@@ -38,6 +38,10 @@ public sealed class PetsController : ControllerBase
     {
         try
         {
+            _logger.LogInformation(
+                "Creating pet for owner {OwnerId}. Pet: Name={Name}, Type={Type}, DateOfBirth={DateOfBirth}",
+                ownerId, request.Name, request.Type, request.DateOfBirth);
+
             var command = new CreatePetCommand(
                 ownerId,
                 request.Name,
@@ -47,17 +51,23 @@ public sealed class PetsController : ControllerBase
                 request.Description);
 
             var result = await _mediator.Send(command, cancellationToken);
+            _logger.LogInformation("Pet created successfully with ID {PetId}", result.Id);
             return CreatedAtAction(nameof(GetPet), new { petId = result.Id, ownerId }, result);
+        }
+        catch (ValidationException ex)
+        {
+            _logger.LogWarning(ex, "Validation exception when creating pet for owner {OwnerId}: {Message}", ownerId, ex.Message);
+            return BadRequest(new { error = ex.Message, code = ex.Code, errors = ex.Errors });
         }
         catch (DomainException ex)
         {
-            _logger.LogWarning(ex, "Domain exception when creating pet");
+            _logger.LogWarning(ex, "Domain exception when creating pet for owner {OwnerId}: {Message}", ownerId, ex.Message);
             return BadRequest(new { error = ex.Message, code = ex.Code });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating pet");
-            return StatusCode(500, new { error = "An error occurred while creating the pet" });
+            _logger.LogError(ex, "Unexpected error creating pet for owner {OwnerId}: {Message}", ownerId, ex.Message);
+            return StatusCode(500, new { error = "An error occurred while creating the pet", code = "INTERNAL_ERROR" });
         }
     }
 

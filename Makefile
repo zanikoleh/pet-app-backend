@@ -79,7 +79,7 @@ test-coverage:
 
 # Service management
 docker-up:
-	@echo "Starting Docker containers..."
+	@echo "Starting Docker containers and rebuilding images..."
 	docker-compose up -d --build
 
 docker-down:
@@ -142,7 +142,7 @@ setup: restore build docker-up db-migrate
 init: setup
 	@echo "✓ Development environment initialized!"
 
-full-restart: docker-down rebuild docker-up db-migrate
+full-restart: docker-down docker-up db-migrate health-check
 	@echo "✓ Full restart complete! Infrastructure is running."
 
 .DEFAULT_GOAL := help

@@ -35,6 +35,9 @@ public static class LoggingExtensions
         string serviceName,
         string? environment = null)
     {
+        // Enable Serilog self-logging to console for debugging
+        Serilog.Debugging.SelfLog.Enable(Console.Out);
+        
         environment ??= builder.Environment.EnvironmentName;
         
         // Ensure logs directory exists
@@ -50,6 +53,26 @@ public static class LoggingExtensions
         // Get Elasticsearch configuration (optional)
         var elasticsearchUrl = builder.Configuration.GetValue<string>("Logging:Elasticsearch:Url");
         var enableElasticsearch = !string.IsNullOrEmpty(elasticsearchUrl);
+        
+        // Debug: List all Logging:* configuration keys
+        Console.WriteLine("=== DEBUG: All Configuration Keys ===");
+        var loggingSection = builder.Configuration.GetSection("Logging");
+        Console.WriteLine($"Logging section exists: {loggingSection.Exists()}");
+        Console.WriteLine($"Logging section value: {loggingSection.Value}");
+        
+        foreach (var child in loggingSection.GetChildren())
+        {
+            Console.WriteLine($"  {child.Key} = {child.Value}");
+            foreach (var subchild in child.GetChildren())
+            {
+                Console.WriteLine($"    {subchild.Key} = {subchild.Value}");
+            }
+        }
+        
+        // Also try direct key
+        Console.WriteLine($"Direct Logging:Elasticsearch:Url = {builder.Configuration["Logging:Elasticsearch:Url"]}");
+        Console.WriteLine($"Final elasticsearchUrl value: {elasticsearchUrl ?? "NULL"}");
+        Console.WriteLine("=== DEBUG: All Configuration Keys END ===");
 
         // Configure Serilog with OTEL context enrichment
         var loggerConfig = new LoggerConfiguration()
@@ -78,7 +101,8 @@ public static class LoggingExtensions
             {
                 AutoRegisterTemplate = true,
                 DetectElasticsearchVersion = true,
-                IndexFormat = $"logs-{serviceName.ToLower()}-{{0:yyyy.MM.dd}}",
+                // Use non-data-stream naming pattern (avoid logs-* prefix which triggers ES 8.x data stream mode)
+                IndexFormat = $"logindex-{serviceName.ToLower()}-{{0:yyyy.MM.dd}}",
                 NumberOfShards = 1,
                 NumberOfReplicas = 0,
                 // Ensure bulk operations include all properties for searching

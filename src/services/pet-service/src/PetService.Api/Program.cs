@@ -15,6 +15,7 @@ builder.AddStructuredLogging("pet-service");
 
 // Add services
 builder.Services.AddControllers();
+builder.Services.AddModelValidationErrorHandling();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -49,6 +50,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseCorrelationIdMiddleware();
+app.UseRequestResponseLogging();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 

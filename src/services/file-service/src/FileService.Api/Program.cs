@@ -142,6 +142,11 @@ using (var scope = app.Services.CreateScope())
     scope.ServiceProvider.GetRequiredService<FileService.Infrastructure.Persistence.FileServiceDbContext>().Database.Migrate();
 }
 
+// Log service startup
+Console.WriteLine($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff}] File Service instance started successfully");
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("File Service instance started successfully at {StartTime}", DateTime.UtcNow);
+
 app.Run();
 
 #pragma warning disable CS1591
