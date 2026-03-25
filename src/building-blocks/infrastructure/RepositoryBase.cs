@@ -26,12 +26,18 @@ public abstract class RepositoryBase<TEntity, TDbContext, TId>
 
     public Task<int> CountAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
     {
-        return DbSet.Where(x => specification.IsSatisfiedBy(x)).CountAsync(cancellationToken);
+        var expression = specification.GetExpression();
+        return expression == null 
+            ? DbSet.CountAsync(cancellationToken)
+            : DbSet.Where(expression).CountAsync(cancellationToken);
     }
 
     public Task<TEntity?> FindAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
     {
-        return DbSet.Where(x => specification.IsSatisfiedBy(x)).FirstOrDefaultAsync(cancellationToken);
+        var expression = specification.GetExpression();
+        return expression == null
+            ? DbSet.FirstOrDefaultAsync(cancellationToken)
+            : DbSet.Where(expression).FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <summary>

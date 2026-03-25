@@ -4,6 +4,7 @@ using InfrastructureWeb.Middleware;
 using InfrastructureWeb;
 using SharedKernel.Infrastructure.EventBus;
 using Observability;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +21,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Get configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("PetServiceDb")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'PetServiceDb' or 'DefaultConnection' not found.");
 
 // Add application layer
 builder.Services.AddApplication();
@@ -47,6 +49,27 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Apply database migrations
+using (var scope = app.Services.CreateScope())
+{
+    var serviceScopeFactory = scope.ServiceProvider;
+    var context = serviceScopeFactory.GetRequiredService<PetService.Infrastructure.Persistence.PetServiceDbContext>();
+    var logger = serviceScopeFactory.GetRequiredService<ILogger<Program>>();
+    
+    try
+    {
+        logger.LogInformation("Ensuring database exists and applying migrations...");
+        // Ensure database and schema are created
+        await context.Database.EnsureCreatedAsync();
+        logger.LogInformation("Database setup completed successfully");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while setting up the database");
+        throw;
+    }
+}
 
 // Configure the HTTP request pipeline
 app.UseCorrelationIdMiddleware();

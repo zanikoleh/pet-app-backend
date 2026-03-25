@@ -47,7 +47,10 @@ public sealed class Pet : AggregateRoot<Guid>
         OwnerId = ownerId;
         Name = name;
         Type = type;
-        DateOfBirth = dateOfBirth;
+        // Ensure DateOfBirth is UTC for PostgreSQL timestamp with time zone
+        DateOfBirth = dateOfBirth.Kind == DateTimeKind.Unspecified 
+            ? DateTime.SpecifyKind(dateOfBirth, DateTimeKind.Utc) 
+            : dateOfBirth.ToUniversalTime();
         Breed = breed;
         Description = description;
         CreatedAt = DateTime.UtcNow;

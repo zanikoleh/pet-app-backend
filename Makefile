@@ -142,7 +142,7 @@ setup: restore build docker-up db-migrate
 init: setup
 	@echo "✓ Development environment initialized!"
 
-full-restart: docker-down docker-up db-migrate health-check
+full-restart: docker-down docker-up health-check
 	@echo "✓ Full restart complete! Infrastructure is running."
 
 .DEFAULT_GOAL := help
