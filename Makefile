@@ -93,10 +93,6 @@ docker-up:
 	@echo "Starting Docker containers..."
 	docker-compose up -d --build
 
-docker-up:
-	@echo "Starting Docker containers..."
-	docker-compose up -d --build
-
 docker-down:
 	@echo "Stopping Docker containers..."
 	docker-compose down
@@ -140,7 +136,7 @@ setup: restore build docker-up db-migrate
 init: setup
 	@echo "✓ Ready for development!"
 
-full-restart: docker-down clean restore build docker-up db-migrate
+full-restart: docker-down rebuild docker-up db-migrate
 	@echo "✓ Full restart complete! Services are running."
 
 .DEFAULT_GOAL := help
