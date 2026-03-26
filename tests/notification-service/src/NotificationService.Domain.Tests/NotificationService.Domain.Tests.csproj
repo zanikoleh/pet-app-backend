@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="../../../../src/building-blocks/shared-kernel/SharedKernel.csproj" />
     <ProjectReference Include="../../../../src/services/notification-service/src/NotificationService.Domain/NotificationService.Domain.csproj" />
+    <ProjectReference Include="../../../../src/services/notification-service/src/NotificationService.Application/NotificationService.Application.csproj" />
   </ItemGroup>
 
 </Project>
