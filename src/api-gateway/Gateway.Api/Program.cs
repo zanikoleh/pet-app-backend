@@ -1,6 +1,7 @@
 using Yarp.ReverseProxy.Configuration;
 using Observability;
 using InfrastructureWeb;
+using InfrastructureWeb.Middleware;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,16 +12,8 @@ builder.AddObservability("api-gateway");
 // Add structured logging
 builder.AddStructuredLogging("api-gateway");
 
-// Add services for the API Gateway
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+// Add secure CORS policies
+builder.Services.AddSecureCors(builder.Configuration);
 
 // Add Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -59,8 +52,14 @@ var app = builder.Build();
 app.UseCorrelationIdMiddleware();
 app.UseTraceContextPropagation();
 
+// Apply security middleware in order
+app.UseSecurityHeaders();
+app.UseRateLimiting();
+app.UseInputValidation();
+app.UseCorsPolicyValidation();
+
 // Use CORS
-app.UseCors("AllowAll");
+app.UseSecureCors();
 
 // Add response headers middleware
 app.Use(async (context, next) =>

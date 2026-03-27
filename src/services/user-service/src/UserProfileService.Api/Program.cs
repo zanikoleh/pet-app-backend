@@ -9,6 +9,7 @@ using Microsoft.OpenApi;
 using UserProfileService.Application;
 using UserProfileService.Infrastructure;
 using InfrastructureWeb.Middleware;
+using InfrastructureWeb.Middleware;
 using InfrastructureWeb;
 using SharedKernel.Infrastructure;
 using Observability;
@@ -102,16 +103,8 @@ builder.Services.AddAuthorization();
 // Add Health Checks
 builder.Services.AddHealthChecks();
 
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+// Add secure CORS policies
+builder.Services.AddSecureCors(builder.Configuration);
 
 var app = builder.Build();
 
@@ -119,6 +112,12 @@ var app = builder.Build();
 app.UseCorrelationIdMiddleware();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
+
+// Apply security middleware in order
+app.UseSecurityHeaders();
+app.UseRateLimiting();
+app.UseInputValidation();
+app.UseCorsPolicyValidation();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
@@ -131,7 +130,7 @@ if (!app.Environment.IsEnvironment("Docker"))
 {
     app.UseHttpsRedirection();
 }
-app.UseCors("AllowAll");
+app.UseSecureCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -55,16 +55,8 @@ builder.Services.AddEventBus(builder.Configuration);
 // Add health checks
 builder.Services.AddHealthChecks();
 
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policyBuilder =>
-    {
-        policyBuilder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+// Add secure CORS policies
+builder.Services.AddSecureCors(builder.Configuration);
 
 var app = builder.Build();
 
@@ -95,6 +87,12 @@ app.UseRequestResponseLogging();
 app.UseExceptionHandling();
 app.UseTraceContextPropagation();
 
+// Apply security middleware in order
+app.UseSecurityHeaders();
+app.UseRateLimiting();
+app.UseInputValidation();
+app.UseCorsPolicyValidation();
+
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
     app.UseSwagger();
@@ -106,7 +104,7 @@ if (!app.Environment.IsEnvironment("Docker"))
 {
     app.UseHttpsRedirection();
 }
-app.UseCors("AllowAll");
+app.UseSecureCors();
 app.MapControllers();
 app.MapHealthChecks("/health");
 
