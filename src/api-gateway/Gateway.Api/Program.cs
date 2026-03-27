@@ -1,6 +1,7 @@
 using Yarp.ReverseProxy.Configuration;
 using Observability;
 using InfrastructureWeb;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,21 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new() { Title = "Pet App API Gateway", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo
+    { 
+        Title = "Pet App API Gateway", 
+        Version = "v1",
+        Description = "Central API Gateway for the Pet App microservices architecture. Routes requests to Pet Service, Identity Service, File Service, Notification Service, and User Profile Service.",
+        Contact = new OpenApiContact
+        {
+            Name = "Pet App Development Team",
+            Email = "support@petapp.dev"
+        },
+        License = new OpenApiLicense
+        {
+            Name = "MIT"
+        }
+    });
 });
 
 // Load configuration

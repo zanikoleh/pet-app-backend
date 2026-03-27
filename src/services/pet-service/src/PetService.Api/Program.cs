@@ -5,6 +5,8 @@ using InfrastructureWeb;
 using SharedKernel.Infrastructure.EventBus;
 using Observability;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,23 @@ builder.AddStructuredLogging("pet-service");
 builder.Services.AddControllers();
 builder.Services.AddModelValidationErrorHandling();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    { 
+        Title = "Pet Service API", 
+        Version = "v1",
+        Description = "Pet management service with CRUD operations, search, and file attachment capabilities"
+    });
+    
+    // Include XML comments if available
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+});
 
 // Get configuration
 var connectionString = builder.Configuration.GetConnectionString("PetServiceDb")

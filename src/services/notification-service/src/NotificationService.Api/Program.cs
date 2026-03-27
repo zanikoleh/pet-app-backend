@@ -6,6 +6,7 @@ using NotificationService.Infrastructure;
 using InfrastructureWeb.Middleware;
 using InfrastructureWeb;
 using Observability;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +26,16 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Notification Service API",
         Version = "v1",
-        Description = "Email and SMS notification service"
+        Description = "Email and SMS notification service for user communications"
     });
+    
+    // Include XML comments if available
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
 });
 
 // Add infrastructure services
