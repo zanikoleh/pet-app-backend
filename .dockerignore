@@ -1,0 +1,79 @@
+# Build outputs
+**/bin/
+**/obj/
+**/dist/
+**/build/
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vs/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.user
+*.suo
+*.sln.iml
+
+# Package managers
+node_modules/
+package-lock.json
+yarn.lock
+
+# Documentation
+*.md
+docs/
+
+# Test files and coverage
+**/test/
+**/tests/
+*.test.js
+*.spec.js
+.nyc_output/
+coverage/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.docker/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Temporary and cache files
+.cache/
+tmp/
+temp/
+*.tmp
+.sass-cache/
+
+# OS files
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Infrastructure/Terraform
+infrastructure/
+
+# Project state docs (not needed in container)
+project-state-docs/
+
+# Scripts directory (not needed in container)
+scripts/
+
+# Makefile
+Makefile
