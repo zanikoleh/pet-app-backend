@@ -38,8 +38,8 @@ LABEL maintainer="pet-app team" \
 
 # Install system dependencies with specific versions
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgssapi-krb5-2=1.18.3-6+deb11u3 \
-    postgresql-client=12.15-1.pgdg110+1 \
+    libgssapi-krb5-2 \
+    postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
