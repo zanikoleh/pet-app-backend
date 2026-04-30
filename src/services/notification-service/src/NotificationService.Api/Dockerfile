@@ -43,7 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create non-root user for security
-RUN useradd -m -u 1000 appuser
+RUN useradd -m -u 1001 appuser
 
 WORKDIR /app
 EXPOSE 80 443

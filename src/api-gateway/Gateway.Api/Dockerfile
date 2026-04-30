@@ -36,7 +36,7 @@ LABEL maintainer="pet-app team" \
       description="API Gateway service"
 
 # Create non-root user for security
-RUN useradd -m -u 1000 appuser
+RUN useradd -m -u 1001 appuser
 
 WORKDIR /app
 EXPOSE 80 443
