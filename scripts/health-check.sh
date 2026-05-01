@@ -15,6 +15,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Health check retry configuration (override via env vars)
+HEALTH_MAX_ATTEMPTS="${HEALTH_MAX_ATTEMPTS:-6}"
+HEALTH_DELAY_SECONDS="${HEALTH_DELAY_SECONDS:-5}"
+HEALTH_CURL_TIMEOUT="${HEALTH_CURL_TIMEOUT:-3}"
+
 # Track health check results
 TOTAL_CHECKS=0
 PASSED_CHECKS=0
@@ -37,22 +42,40 @@ check_service_health() {
     local service_name=$1
     local endpoint=$2
     local full_url="$GATEWAY_BASE_URL$endpoint"
-    
+    local attempts=0
+    local status_code=""
+    local max_attempts=${HEALTH_MAX_ATTEMPTS}
+    local delay=${HEALTH_DELAY_SECONDS}
+    local curl_timeout=${HEALTH_CURL_TIMEOUT}
+
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    
+
     echo -n "Checking $service_name at $endpoint... "
-    
-    # Send request and extract HTTP status code
-    status_code=$(curl -s -o /dev/null -w "%{http_code}" "$full_url" 2>/dev/null)
-    
-    if [ "$status_code" = "200" ]; then
-        echo -e "${GREEN}✅ Healthy (HTTP $status_code)${NC}"
-        PASSED_CHECKS=$((PASSED_CHECKS + 1))
-    else
-        echo -e "${RED}❌ Unhealthy (HTTP $status_code)${NC}"
-        FAILED_CHECKS=$((FAILED_CHECKS + 1))
-        FAILED_SERVICES+=("$service_name")
-    fi
+
+    while [ $attempts -lt $max_attempts ]; do
+        attempts=$((attempts + 1))
+        status_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time "$curl_timeout" "$full_url" 2>/dev/null)
+        if [ -z "$status_code" ]; then
+            status_code="000"
+        fi
+
+        if [ "$status_code" = "200" ]; then
+            echo -e "${GREEN}✅ Healthy (HTTP $status_code)${NC}"
+            PASSED_CHECKS=$((PASSED_CHECKS + 1))
+            return 0
+        fi
+
+        if [ $attempts -lt $max_attempts ]; then
+            echo -n "."
+            sleep "$delay"
+        fi
+    done
+
+    echo ""
+    echo -e "${RED}❌ Unhealthy (HTTP $status_code) after ${max_attempts} attempts${NC}"
+    FAILED_CHECKS=$((FAILED_CHECKS + 1))
+    FAILED_SERVICES+=("$service_name")
+    return 1
 }
 
 check_docker_container_status() {
