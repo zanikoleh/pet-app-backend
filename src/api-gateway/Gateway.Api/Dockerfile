@@ -41,6 +41,7 @@ RUN useradd -m -u 1001 appuser
 WORKDIR /app
 EXPOSE 80 443
 
+RUN mkdir -p /app/logs && chown -R appuser:appuser /app/logs
 COPY --from=publish --chown=appuser:appuser /app/publish .
 
 # Add health check
